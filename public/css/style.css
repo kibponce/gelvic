@@ -1,0 +1,12 @@
+.navbar.navbar-default {
+    background-color: #5cb85c !important;
+    border-color: #b5d9b5 !important;
+}
+
+.navbar-default .navbar-brand {
+    color: #fff !important;
+}
+
+#page-wrapper {
+    padding: 30px 30px !important;
+}
