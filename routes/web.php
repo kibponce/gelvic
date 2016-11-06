@@ -13,14 +13,22 @@
 
 Route::get('/', 'AppController@index');
 
-Route::get('purchase-order', 'PurchaseOrderController@index');
-
-Route::get('equipment', 'EquipmentController@index');
+Route::group(['prefix' => 'project-order'], function () {
+    Route::get('/', 'ProjectOrderController@index');
+    Route::get('/add{id?}', 'ProjectOrderController@add');
+    Route::post('/post', 'ProjectOrderController@post');
+});
 
 Route::group(['prefix' => 'manpower'], function () {
     Route::get('/', 'ManpowerController@index');
-    Route::get('/add/{id?}', 'ManpowerController@add');
-
+    Route::get('/details/{id?}', 'ManpowerController@add');
+    Route::post('/post', 'ManpowerController@post');
 });
 
-    Route::post('/post', 'ManpowerController@post');
+Route::group(['prefix' => 'equipment'], function () {
+    Route::get('/', 'EquipmentController@index');
+    Route::get('/details/{id?}', 'EquipmentController@add');
+    Route::post('/post', 'EquipmentController@post');
+});
+
+   

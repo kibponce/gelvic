@@ -28,7 +28,7 @@
                                 <input class="form-control" type="hidden" name="id" value="@if(old('id')) {{old('id')}}@elseif($manpower){{$manpower->id}}@endif">
                                 <div class="form-group @if ($errors->has('employee_id')) has-error  @endif">
                                     <label>Employee ID</label>
-                                    <input class="form-control" placeholder="Enter ID" name="employee_id" value="@if(old('employee_id')) {{old('employee_id')}}@elseif($manpower){{$manpower->employee_id}}@endif">
+                                    <input class="form-control" placeholder="Enter ID" name="employee_id" autofocus value="@if(old('employee_id')) {{old('employee_id')}}@elseif($manpower){{$manpower->employee_id}}@endif">
                                     @if ($errors->has('employee_id'))
                                         <p class="help-block">{{ $errors->first('employee_id') }} </p>
                                     @endif
@@ -39,7 +39,7 @@
                             <div class="col-lg-6">
                                 <div class="form-group @if ($errors->has('first_name')) has-error  @endif">
                                     <label>First Name</label>
-                                    <input class="form-control" placeholder="Enter First Name" name="first_name" value="@if(old('first_name')) {{old('first_name')}}@elseif($manpower){{$manpower->first_name}}@endif">
+                                    <input class="form-control" placeholder="Enter First Name" name="first_name" value="@if(old('first_name')){{old('first_name')}}@elseif($manpower){{$manpower->first_name}}@endif">
                                     @if ($errors->has('first_name'))
                                         <p class="help-block">{{ $errors->first('first_name') }} </p>
                                     @endif
@@ -107,7 +107,7 @@
                                     <div class="form-group input-group">
                                         <span class="input-group-addon">PHP
                                         </span>
-                                        <input type="text" class="form-control" placeholder="Enter Rate" name="rate" value="@if(old('rate')) {{old('rate')}}@elseif($manpower){{$manpower->rate}}@endif"">
+                                        <input type="text" class="form-control" placeholder="0.00" name="rate" value="@if(old('rate')) {{old('rate')}}@elseif($manpower){{$manpower->rate}}@endif"">
                                     </div>
                                     @if ($errors->has('rate'))
                                         <p class="help-block">{{ $errors->first('rate') }} </p>

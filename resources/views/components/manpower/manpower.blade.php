@@ -18,9 +18,10 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
-                    <table width="100%" class="table table-striped table-bordered table-hover" id="manpower-table">
+                    <table width="100%" class="table table-striped table-bordered table-hover table-dataTable" id="manpower-table">
                         <thead>
                             <tr>
+                                <th>ID</th>
                                 <th>Name</th>
                                 <th>Position</th>
                                 <th class="no-sort">Address</th>
@@ -31,6 +32,7 @@
                         <tbody>
                             @foreach ($manpower as $k=>$v)
                                 <tr class="odd">
+                                    <td>{{$v->employee_id}}</td>
                                     <td>{{$v->first_name}} {{$v->last_name}}</td>
                                     <td>{{$v->position}}</td>
                                     <td>{{$v->address}}</td>
@@ -51,18 +53,4 @@
         </div>
         <!-- /.col-lg-12 -->
     </div>
-@stop
-
-@section('scripts')
-    <script>
-        $(document).ready(function() {
-            $('#manpower-table').DataTable({
-                "responsive": true,
-                "columnDefs": [ {
-                      "targets": 'no-sort',
-                      "orderable": false,
-                } ]
-            });
-        });
-    </script>
 @stop

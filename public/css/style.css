@@ -10,3 +10,13 @@
 #page-wrapper {
     padding: 30px 30px !important;
 }
+
+.sidebar {
+	width: 190px !important;
+}
+
+@media (min-width: 768px) {
+	#page-wrapper {
+		margin: 0 0 0 190px !important;
+	}
+}

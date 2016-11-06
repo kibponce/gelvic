@@ -14,7 +14,7 @@
         <div class="sidebar-nav navbar-collapse">
             <ul class="nav" id="side-menu">
                 <li>
-                    <a href="{{ action('PurchaseOrderController@index') }}"><i class="fa fa-gears fa-fw"></i> Purchase Order(PO)</a>
+                    <a href="{{ action('ProjectOrderController@index') }}"><i class="fa fa-gears fa-fw"></i> Project Order(PO)</a>
                 </li>
                 <li>
                     <a href="{{ action('ManpowerController@index') }}"><i class="fa fa-users fa-fw"></i> Manpower</a>
