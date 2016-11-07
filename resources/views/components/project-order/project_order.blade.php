@@ -3,54 +3,6 @@
 @section('content')
 	<!-- /.row -->
 	<div class="row">
-		<div class="col-lg-4 col-md-6">
-	        <div class="panel panel-green">
-	            <div class="panel-heading">
-	                <div class="row">
-	                    <div class="col-xs-3">
-	                        <i class="fa fa-building fa-5x"></i>
-	                    </div>
-	                    <div class="col-xs-9 text-right">
-	                        <div class="huge">1,000,000</div>
-	                        <div>Amount (Php)</div>
-	                    </div>
-	                </div>
-	            </div>
-	        </div>
-	    </div>
-    	<div class="col-lg-4 col-md-6">
-            <div class="panel panel-red">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-money fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">100, 000</div>
-                            <div>Expenses (Php)</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    	<div class="col-lg-4 col-md-6">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-bar-chart-o fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">1,000,000</div>
-                            <div>Remaining Balance (Php)</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-	</div>
-
-	<div class="row">
 		<div class="col-lg-12 col-md-12">
 			<a type="button" class="btn btn-primary btn-sm" href="{{ action('ProjectOrderController@add') }}">
 				<i class="fa fa-plus"></i> Add Project Order
@@ -85,9 +37,12 @@
                                     <td>{{$v->type}}</td>
                                     <td>{{$v->start_date}}</td>
                                     <td>{{$v->end_date}}</td>
-                                    <td>{{$v->amount}}</td>
+                                    <td>{{number_format($v->amount, 2)}}</td>
                                     <td class="text-center" width="30">
-                                        <a type="button" class="btn btn-success btn-xs" href="">
+                                        <a type="button" class="btn btn-info btn-xs" href="{{ action('ProjectOrderController@show', $v->id) }}">
+                                            <i class="fa fa-gear"></i>
+                                        </a>
+                                        <a type="button" class="btn btn-success btn-xs" href="{{ action('ProjectOrderController@add', $v->id) }}">
                                             <i class="fa fa-pencil"></i>
                                         </a>
                                     </td>

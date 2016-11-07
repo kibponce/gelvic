@@ -21,7 +21,7 @@ class CreateManpowerTable extends Migration {
 			$table->string('position');
 			$table->text('address');
 			$table->date('birthdate');
-			$table->decimal('rate');
+			$table->decimal('rate', 20, 2);
 			$table->timestamps();
 			$table->softDeletes();
 		});

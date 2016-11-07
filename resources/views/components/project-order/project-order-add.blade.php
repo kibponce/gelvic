@@ -26,13 +26,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group @if ($errors->has('po_number')) has-error  @endif">
-                                <input class="form-control" type="text" name="id" value>
+                                <input class="form-control" type="hidden" name="id" value="@if(old('id')) {{old('id')}}@elseif($projectOrder){{$projectOrder->id}}@endif">
                                 <label>Project Order Number</label>
                                 <input class="form-control" 
                                         placeholder="Enter Po Number" 
                                         name="po_number" 
                                         autofocus
-                                        value="">
+                                        value="@if(old('po_number')) {{old('po_number')}}@elseif($projectOrder){{$projectOrder->po_number}}@endif">
                                 @if ($errors->has('po_number'))
                                     <p class="help-block">{{ $errors->first('po_number') }} </p>
                                 @endif
@@ -44,7 +44,7 @@
                                 <input class="form-control" 
                                         placeholder="Enter Po Type" 
                                         name="type" 
-                                        value="">
+                                        value="@if(old('type')) {{old('type')}}@elseif($projectOrder){{$projectOrder->type}}@endif">
                                 @if ($errors->has('type'))
                                     <p class="help-block">{{ $errors->first('type') }} </p>
                                 @endif
@@ -58,7 +58,7 @@
                                 <div class="form-group input-group">
                                     <span class="input-group-addon">PHP
                                     </span>
-                                    <input type="text" class="form-control" placeholder="0.00" name="amount" value="">
+                                    <input type="text" class="form-control" placeholder="0.00" name="amount" value="@if(old('amount')) {{old('amount')}}@elseif($projectOrder){{$projectOrder->amount}}@endif">
                                 </div>
                                 @if ($errors->has('amount'))
                                     <p class="help-block">{{ $errors->first('amount') }} </p>
@@ -69,7 +69,11 @@
                             <div class="form-group @if ($errors->has('start_date')) has-error  @endif">
                                 <label>Start Date</label>
                                 <div class='input-group date' id='start_date'>
-                                    <input type='text' class="form-control" name="start_date" placeholder="Enter Start Date" value=""/>
+                                    <input type='text' 
+                                            class="form-control" 
+                                            name="start_date" 
+                                            placeholder="Enter Start Date" 
+                                            value="@if(old('start_date')) {{old('start_date')}}@elseif($projectOrder){{$projectOrder->start_date}}@endif"/>
                                     <span class="input-group-addon">
                                        <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -88,7 +92,7 @@
                                         placeholder="Enter Area" 
                                         name="area" 
                                         autofocus
-                                        value="">
+                                        value="@if(old('area')) {{old('area')}}@elseif($projectOrder){{$projectOrder->area}}@endif">
                                 @if ($errors->has('area'))
                                     <p class="help-block">{{ $errors->first('area') }} </p>
                                 @endif
@@ -98,7 +102,11 @@
                             <div class="form-group @if ($errors->has('end_date')) has-error  @endif">
                                 <label>End Date</label>
                                 <div class='input-group date' id='end_date'>
-                                    <input type='text' class="form-control" name="end_date" placeholder="Enter End Date" value=""/>
+                                    <input type='text' 
+                                            class="form-control" 
+                                            name="end_date" 
+                                            placeholder="Enter End Date" 
+                                            value="@if(old('end_date')) {{old('end_date')}}@elseif($projectOrder){{$projectOrder->end_date}}@endif"/>
                                     <span class="input-group-addon">
                                        <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -113,7 +121,7 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Description</label>
-                                <textarea class="form-control" name="description"> </textarea>
+                                <textarea class="form-control" name="description"> @if(old('description')) {{old('description')}}@elseif($projectOrder){{$projectOrder->description}}@endif </textarea>
                             </div>
                         </div>
                     </div>

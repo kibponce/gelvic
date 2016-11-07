@@ -19,12 +19,20 @@ class ProjectOrderController extends Controller {
     }
 
     public function add($id = "") {
-    	return view('components.project-order.project-order-add');
+        $projectOrder = ProjectOrder::find($id);
+        $data = array(
+            "projectOrder" => $projectOrder
+        );
+    	return view('components.project-order.project-order-add', $data);
     }
 
     public function post(Request $request){
     	$id = $request->input('id');
-    	
+        
+        if($id != "") {
+            array_splice(ProjectOrder::$validation_rules, 0, 1);
+        }
+
     	$validate = Validator::make($request->all(), ProjectOrder::$validation_rules);
     	if ($validate->passes()) {
     	   
@@ -65,5 +73,13 @@ class ProjectOrderController extends Controller {
     	        return redirect()->action('ProjectOrderController@add')->withErrors($validate)->withInput();
     	    }
     	}
+    }
+
+    public function show($id) {
+        $projectOrder = ProjectOrder::find($id);
+        $data = array(
+            "projectOrder" => $projectOrder
+        );
+        return view('components.project-order.project-order-details', $data);
     }
 }

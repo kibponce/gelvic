@@ -19,9 +19,10 @@ class CreatePoTable extends Migration
             $table->string('type');
             $table->string('description');
             $table->string('area');
-            $table->decimal('amount');
+            $table->decimal('amount', 20, 2);
             $table->date('start_date');
             $table->date('end_date');
+            $table->boolean('is_done')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
