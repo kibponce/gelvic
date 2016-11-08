@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\ProjectOrder;
+use App\ProjectOrderDaily;
 use Illuminate\Http\Request;
 
 use Validator;
@@ -77,9 +78,39 @@ class ProjectOrderController extends Controller {
 
     public function show($id) {
         $projectOrder = ProjectOrder::find($id);
+        $projectDaily = ProjectOrderDaily::where('po_id', $id)->get();
         $data = array(
-            "projectOrder" => $projectOrder
+            "projectOrder" => $projectOrder,
+            "projectDaily" => $projectDaily
         );
+
         return view('components.project-order.project-order-details', $data);
     }
+
+    public function generateDaily(Request $request) {
+    	$po_id = $request->input('po_id');
+    	$date = $request->input('date');
+
+    	$po_daily = ProjectOrderDaily::where('po_id', $po_id)
+    									->where('date', $date);
+
+ 		if($po_daily->get()->count() > 0) {
+ 			echo 'naa na';
+ 		}else{
+ 			$po_daily = new ProjectOrderDaily;
+ 			$po_daily->po_id = $po_id;
+ 			$po_daily->date = $date;
+ 			$po_daily->save();
+ 		}
+    }
+
+    public function showProjectDaily($po_daily_id){
+    	$projectDaily = ProjectOrderDaily::find($po_daily_id);
+    	$data = array(
+            "projectDaily" => $projectDaily
+        );
+
+        return view('components.project-order.project-daily', $data);
+    }
 }
+

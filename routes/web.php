@@ -18,6 +18,8 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::get('/add/{id?}', 'ProjectOrderController@add');
     Route::post('/post', 'ProjectOrderController@post');
     Route::get('/show/{id?}', 'ProjectOrderController@show');
+    Route::post('/generateDaily/', 'ProjectOrderController@generateDaily');
+    Route::get('/daily/{po_daily_id?}', 'ProjectOrderController@showProjectDaily');
 });
 
 Route::group(['prefix' => 'manpower'], function () {

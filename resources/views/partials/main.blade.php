@@ -20,7 +20,7 @@
         <!-- /#page-wrapper -->
     </div>
     @include('partials.assets.js')
-
+    @yield('modals')
     @yield('scripts')
 
     <script>
