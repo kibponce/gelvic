@@ -1,7 +1,6 @@
 <?php
 
 namespace App;
-
 use Illuminate\Database\Eloquent\Model;
 
 class Manpower extends Model
@@ -17,4 +16,14 @@ class Manpower extends Model
         'position' => 'required',
         'rate' => 'required | numeric',
     );
+
+    public function po_manpower()
+    {
+       return $this->hasMany('App\ProjectOrderManpower', 'manpower_id', 'id');
+    }
+
+    public function po_daily_manpower()
+    {
+       return $this->hasMany('App\ProjectOrderDailyManpower', 'manpower_id', 'id');
+    }
 }

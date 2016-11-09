@@ -20,6 +20,9 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::get('/show/{id?}', 'ProjectOrderController@show');
     Route::post('/generateDaily/', 'ProjectOrderController@generateDaily');
     Route::get('/daily/{po_daily_id?}', 'ProjectOrderController@showProjectDaily');
+    Route::get('/assign-manpower/{po_id?}/{manpower_id?}', 'ProjectOrderController@assignManpowerToProject');
+    Route::get('/delete-manpower/{id?}', 'ProjectOrderController@deleteManpowerFromProject');
+    Route::get('/assign-daily-manpower/{po_daily_id?}/{manpower_id}', 'ProjectOrderController@assignManpowerToProjectDaily');
 });
 
 Route::group(['prefix' => 'manpower'], function () {
