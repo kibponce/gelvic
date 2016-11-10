@@ -44,7 +44,7 @@
                             <i class="fa fa-building fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">{{ number_format($projectOrder->amount,2) }}</div>
+                            <div class="huge text-primary">{{ number_format($projectOrder->amount,2) }}</div>
                             <div>Amount (Php)</div>
                         </div>
                     </div>
@@ -59,7 +59,7 @@
                             <i class="fa fa-money fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">0.00</div>
+                            <div class="huge text-danger">{{ number_format($projectTotalExpenses,2) }}</div>
                             <div>Expenses (Php)</div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                             <i class="fa fa-bar-chart-o fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">0.00</div>
+                            <div class="huge text-success">{{ number_format($projectRemainingBalance,2) }}</div>
                             <div>Remaining Balance (Php)</div>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                         @foreach ($projectDaily as $k=>$v)
                             <a href="{{ action('ProjectOrderController@showProjectDaily', $v->id) }}" class="list-group-item">
                                 <i class="fa fa-calendar fa-fw"></i> {{$v->date}}
-                                <span class="pull-right text-muted small badge"><em>0.00</em>
+                                <span class="pull-right text-muted small badge"><em>{{number_format($v->totalCost, 2)}}</em>
                                 </span>
                             </a>
                         @endforeach

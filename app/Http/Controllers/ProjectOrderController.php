@@ -6,6 +6,7 @@ use App\Manpower;
 use App\ProjectOrderManpower;
 use App\ProjectOrderDailyManpower;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use Validator;
 use Redirect;
@@ -82,6 +83,12 @@ class ProjectOrderController extends Controller {
     public function show($id) {
         $projectOrder = ProjectOrder::find($id);
         $projectDaily = ProjectOrderDaily::where('po_id', $id)->get();
+        $projectTotalExpenses = 0;
+        foreach ($projectDaily as $k=>$v) {
+        	$v->totalCost = $v->getTotalCost();
+        	$projectTotalExpenses = $projectTotalExpenses + $v->totalCost;
+        }
+
         $manpower = Manpower::whereDoesntHave('po_manpower', function ($query) use ($id) {
 		    $query->where('po_id', '=', $id);
 		})->get();
@@ -94,7 +101,9 @@ class ProjectOrderController extends Controller {
             "projectOrder" => $projectOrder,
             "projectDaily" => $projectDaily,
             "manpower" => $manpower,
-            "projectOrderManpower" => $projectOrderManpower
+            "projectOrderManpower" => $projectOrderManpower,
+            "projectTotalExpenses" => $projectTotalExpenses,
+            "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses
         );
 
         return view('components.project-order.project-order-details', $data);
@@ -133,13 +142,39 @@ class ProjectOrderController extends Controller {
 
 		$projectOrderDailyManpower = projectOrderDailyManpower::where('po_daily_id', $po_daily_id)->get();
 
+		$totalExpenses = 0;
 		foreach ($projectOrderDailyManpower as $k=>$v) {
 			$v->manpower = Manpower::find($v->manpower_id);
+			$time_in = "";
+			$time_out = "";
+			$total = 0;
+
+			if($v->in) {
+				$time_in = new Carbon($v->in);
+				$time_in = $time_in->format('h:i A');
+				$startTime = Carbon::parse($v->in);
+				
+			}
+			
+			if($v->out) {
+				$time_out = new Carbon($v->out);
+				$time_out = $time_out->format('h:i A');
+				$finishTime = Carbon::parse($v->out);
+				$total = $finishTime->diffInHours($startTime);
+			}
+			
+			$v->time_in = $time_in;
+			$v->time_out = $time_out;
+			$v->total = $total;
+			$v->totalCost = $total * $v->rate;
+			$totalExpenses = $totalExpenses + $v->totalCost;
 		}
+
     	$data = array(
             "projectDaily" => $projectDaily,
             "manpower" => $manpower,
-            "projectOrderDailyManpower" => $projectOrderDailyManpower
+            "projectOrderDailyManpower" => $projectOrderDailyManpower,
+            "totalExpenses" => $totalExpenses
         );
 
         return view('components.project-order.project-daily', $data);
@@ -172,6 +207,27 @@ class ProjectOrderController extends Controller {
 
     	if($po_daily_manpower->save()) {
     		return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Manpower has been successfully added');
+    	}
+    }
+
+    public function postManpowerDailyLog(Request $request){
+    	$in = $request->input('in');
+    	$out = $request->input('out');
+    	$id = $request->input('id');
+
+    	$manpower_daily = ProjectOrderDailyManpower::find($id);
+    	$project_daily = ProjectOrderDaily::find($manpower_daily->po_daily_id);
+    	$date = $project_daily->date;
+    	$dateTime_in = new \DateTime($date." ".$in);
+    	$dateTime_out = new \DateTime($date." ".$out);
+
+    	$time_in = Carbon::instance($dateTime_in);
+    	$time_out = Carbon::instance($dateTime_out);
+ 
+    	$manpower_daily->in = $time_in->toDateTimeString();
+    	$manpower_daily->out = $time_out->toDateTimeString();
+    	if($manpower_daily->save()){
+    		return redirect()->action('ProjectOrderController@showProjectDaily', $manpower_daily->po_daily_id)->with('success', 'Manpower Time Log is updated');
     	}
     }
 }

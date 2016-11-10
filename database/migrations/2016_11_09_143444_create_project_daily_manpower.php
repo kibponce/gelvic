@@ -25,6 +25,8 @@ class CreateProjectDailyManpower extends Migration
                     ->references('id')
                     ->on('manpower')
                     ->onDelete('cascade');
+            $table->dateTime('in')->nullable(); 
+            $table->dateTime('out')->nullable(); 
             $table->decimal('rate', 20, 2)->default(0); 
             $table->timestamps();
         });

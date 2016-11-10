@@ -33,7 +33,7 @@
                             <i class="fa fa-money fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">0.00</div>
+                            <div class="huge">{{ number_format($totalExpenses, 2)}}</div>
                             <div>Cost(Php)</div>
                         </div>
                     </div>
@@ -59,6 +59,7 @@
                                 <th>Name</th>
                                 <th>In</th>
                                 <th>Out</th>
+                                <th>Total Hours</th>
                                 <th>Rate</th>
                                 <th>Total Cost</th>
                                 <th></th>
@@ -68,14 +69,14 @@
                             @foreach ($projectOrderDailyManpower as $k=>$v)
                                 <tr>
                                     <td>{{$v->manpower->first_name}} {{$v->manpower->last_name}}</td>
-                                    <td>0:00 AM</td>
-                                    <td>0:00 AM</td>
-                                    <td></td>
-                                    <td>{{$v->rate}}</td>
+                                    <td>{{$v->time_in}}</td>
+                                    <td>{{$v->time_out}}</td>
+                                    <td>{{$v->total}}</td>
+                                    <td>{{number_format($v->rate,2)}}</td>
+                                    <td>{{number_format($v->totalCost,2)}}</td>
                                     <td>
-                                        <a type="button" class="btn btn-danger btn-xs" 
-                                        href="">
-                                            <i class="fa fa-times"></i>
+                                        <a type="button" class="btn btn-primary btn-xs dailyLog" data-id="{{$v->id}}"" data-toggle="modal" data-target="#dailyLog" href="">
+                                            <i class="fa fa-clock-o"></i>
                                         </a>
                                     </td>
                                 </tr>
@@ -134,4 +135,84 @@
         </div>
     </div>
     <!-- /.modal-dialog -->
+
+    <!-- Manpower Modal -->
+    <div class="modal fade" id="dailyLog" tabindex="-2" role="dialog" aria-labelledby="manpowerModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                {!! Form::open(array('action' => 'ProjectOrderController@postManpowerDailyLog')) !!}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Daily Log</h4>
+                </div>
+                <div class="modal-body">                     
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <input type='hidden' class="form-control" name="id" id="id" value=""/>
+                            <div class="form-group">
+                                <label>In</label>
+                                <div class='input-group date' id='time_in'>
+                                    <input type='text' class="form-control" name="in" placeholder="Enter Time " value=""/>
+                                    <span class="input-group-addon">
+                                       <span class="fa fa-clock-o"></span>
+                                    </span>
+                                </div>
+                                @if ($errors->has('birthdate'))
+                                    <p class="help-block">{{ $errors->first('in') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Out</label>
+                                <div class='input-group date' id='time_out'>
+                                    <input type='text' class="form-control" name="out" placeholder="Enter Time " value=""/>
+                                    <span class="input-group-addon">
+                                       <span class="fa fa-clock-o"></span>
+                                    </span>
+                                </div>
+                                @if ($errors->has('birthdate'))
+                                    <p class="help-block">{{ $errors->first('in') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-save"></i> Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {!! Form::close() !!}
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
+    <!-- /.modal-dialog -->
+@stop
+
+@section('scripts')
+    <script type="text/javascript">
+        $(function () {
+            $('#time_in').datetimepicker({
+                format: 'LT',
+                defaultDate: moment()
+            });
+
+            $('#time_out').datetimepicker({
+                format: 'LT',
+                defaultDate: moment()
+            });
+
+            $('.dailyLog').click(function (el){
+                $("#id").val($(this).attr("data-id"));
+            });
+        });
+    </script>
 @stop
