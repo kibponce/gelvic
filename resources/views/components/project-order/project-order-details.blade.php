@@ -83,68 +83,97 @@
         </div>
     </div>
     <div class="row">
-        
-        <div class="col-lg-8 col-md-8">
-        	<div class="panel panel-default">
-        	    <div class="panel-heading">
-        	        <i class="fa fa-building fa-fw"></i> Manpower
-        	    </div>
-        	    <!-- /.panel-heading -->
-        	    <div class="panel-body">
-        	        <!-- /.list-group -->
-        	        <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#manpowerModal">Add Manpower</a>
-        	        <br/>
-        	        <table class="table table-bordered table-hover table-striped">
-                        <thead>
-                            <tr>
-                                <th>Employee ID</th>
-                                <th style="width: 350px;">Name</th>
-                                <th style="width: 350px;">Position</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                                @foreach ($projectOrderManpower as $k=>$v)
-                                    <tr>
-                                        <td>{{$v->manpower->employee_id}}</td>
-                                        <td style="width: 450px;">{{$v->manpower->first_name}} {{$v->manpower->last_name}}</td>
-                                        <td>{{$v->manpower->position}}</td>
-                                        <td>
-                                            <a type="button" class="btn btn-danger btn-xs" 
-                                            href="{{ action('ProjectOrderController@deleteManpowerFromProject', $v->id) }}">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                        </tbody>
-                    </table>
-        	    </div>
-        	    <!-- /.panel-body -->
-            </div>
-        </div>
         <div class="col-lg-4 col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <i class="fa fa-building fa-fw"></i> Project Daily
+                    <!-- Button trigger modal -->
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </div>
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
                     <!-- /.list-group -->
-                    <!-- Button trigger modal -->
-                    <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModal">Generate Project Daily</a>
-                    <br/>
                     <div class="list-group">
                         @foreach ($projectDaily as $k=>$v)
                             <a href="{{ action('ProjectOrderController@showProjectDaily', $v->id) }}" class="list-group-item">
-                                <i class="fa fa-calendar fa-fw"></i> {{$v->date}}
-                                <span class="pull-right text-muted small badge"><em>{{number_format($v->totalCost, 2)}}</em>
-                                </span>
+                                <div>
+                                    <i class="fa fa-calendar fa-fw"></i> {{$v->date}}
+                                    <span class="pull-right text-muted small badge"><em>{{number_format($v->totalCost, 2)}}</em>
+                                    </span>
+                                </div>
+                                @if($v->isHoliday)
+                                    <span class="label label-info">Holiday</span>
+                                @endif
+                                @if($v->isSunday)
+                                    <span class="label label-warning">Sunday</span>
+                                @endif
                             </a>
                         @endforeach
                     </div>
                 </div>
                 <!-- /.panel-body -->
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8">
+        	<div class="panel panel-default">
+        	    <div class="panel-heading">
+        	        <i class="fa fa-building fa-fw"></i> Materials
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="modal" data-target="#materialsModal">
+                            <i class="fa fa-plus"></i>
+                        </button>
+                    </div>
+        	    </div>
+        	    <!-- /.panel-heading -->
+        	    <div class="panel-body">
+        	        <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Description</th>
+                                <th class="text-center">QTY</th>
+                                <th class="text-center">Unit</th>
+                                <th class="text-right">Unit Cost</th>
+                                <th class="text-center">Duration</th>
+                                <th class="text-right">Amount</th>
+                                <th class="text-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($projectOrderMaterials as $k=>$v)
+                                <tr>
+                                    <td class="text-center">{{$v->description}}</td>
+                                    <td class="text-center">{{$v->quantity}}</td>
+                                    <td class="text-center">{{$v->unit}}</td>
+                                    <td class="text-right">{{number_format($v->unit_cost, 2)}}</td>
+                                    <td class="text-center">{{$v->duration}}</td>
+                                    <td class="text-right">{{number_format($v->total_amount,2)}}</td>
+                                    <td class="text-center">
+                                        <a type="button" class="btn btn-danger btn-xs" href="{{action('MaterialsController@delete', array('id' => $v->id, 'po_id' => $projectOrder->id))}}">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            
+                            @if(count($projectOrderMaterials) == 0)
+                                <tr>
+                                    <td colspan="6" class="text-center">No Items Added</td>
+                                </tr>
+                            @else
+                                <tr style="background-color: #95ec90;">
+                                    <td colspan="5" class="text-right">Total</td>
+                                    <td class="text-right">{{number_format($totalMaterialsExpense, 2)}}</td>
+                                    <td></td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+        	    </div>
+        	    <!-- /.panel-body -->
             </div>
         </div>
     </div>
@@ -186,45 +215,80 @@
 
 
     <!-- Manpower Modal -->
-    <div class="modal fade" id="manpowerModal" tabindex="-2" role="dialog" aria-labelledby="manpowerModal" aria-hidden="true">
-        <div class="modal-dialog" style="width: 860px;">
+    <div class="modal fade" id="materialsModal" tabindex="-2" role="dialog" aria-labelledby="materialsModal" aria-hidden="true">
+        <div class="modal-dialog">
+            {!! Form::open(array('action' => 'MaterialsController@post')) !!}
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Project Manpower Lists</h4>
+                    <h4 class="modal-title" id="myModalLabel">Materials Form</h4>
                 </div>
                 <div class="modal-body">
-                    <table width="100%" class="table table-striped table-bordered table-hover table-dataTable" id="manpower-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th class="no-sort">Address</th>
-                                <th>Rate</th>
-                                <th class="no-sort text-right" width="30">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($manpower as $k=>$v)
-                                <tr class="odd">
-                                    <td>{{$v->employee_id}}</td>
-                                    <td>{{$v->first_name}} {{$v->last_name}}</td>
-                                    <td>{{$v->position}}</td>
-                                    <td>{{$v->address}}</td>
-                                    <td>{{$v->rate}}</td>
-                                    <td class="text-center" width="30">
-                                        <a type="button" class="btn btn-primary btn-xs" 
-                                        href="{{ action('ProjectOrderController@assignManpowerToProject', array( 'po_id' => $projectOrder->id, 'manpower_id' => $v->id)) }}">
-                                            <i class="fa fa-check-circle"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('description')) has-error  @endif">
+                                <label>Description</label>
+                                <input class="form-control" 
+                                        placeholder="Enter Description" 
+                                        name="po_id"
+                                        type="hidden"
+                                        value="{{$projectOrder->id}}">
+                                <input class="form-control" 
+                                        placeholder="Enter Description" 
+                                        name="description" 
+                                        value="@if(old('description')) {{old('description')}} @endif">
+                                @if ($errors->has('description'))
+                                    <p class="help-block">{{ $errors->first('description') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('quantity')) has-error  @endif">
+                                <label>Quantity</label>
+                                <input type="text" class="form-control" placeholder="Enter Quantity" name="quantity" value="@if(old('quantity')) {{old('quantity')}} @endif">
+                                @if ($errors->has('quantity'))
+                                    <p class="help-block">{{ $errors->first('quantity') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('unit')) has-error  @endif">
+                                <label>Unit</label>
+                                <input type="text" class="form-control" placeholder="Enter Unit" name="unit" value="@if(old('unit')){{old('unit')}}@endif">
+                                @if ($errors->has('unit'))
+                                    <p class="help-block">{{ $errors->first('unit') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('unit_cost')) has-error  @endif">
+                                <label>Unit Cost</label>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">PHP</span>
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="unit_cost" value="@if(old('unit_cost')){{old('unit_cost')}}@endif">
+                                </div>
+                                @if ($errors->has('unit_cost'))
+                                    <p class="help-block">{{ $errors->first('unit_cost') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('duration')) has-error  @endif">
+                                <label>Duration</label>
+                                <input type="text" class="form-control" placeholder="Enter Duration" name="duration" value="@if(old('endif')) {{old('endif')}} @endif">
+                                @if ($errors->has('duration'))
+                                    <p class="help-block">{{ $errors->first('duration') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
                 </div>
             </div>
+            {!! Form::close() !!}
             <!-- /.modal-content -->
         </div>
     </div>
@@ -233,6 +297,7 @@
 
 @section('scripts')
 	<script type="text/javascript">
+        var error = "{{$error}}";
         $(function () {
             $('#datepicker').datetimepicker({
             	format : "YYYY-MM-DD",
@@ -240,6 +305,10 @@
                 sideBySide: true,
                 minDate : "{{$projectOrder->start_date}}"
             });
+
+            if(error === "MATERIALS") {
+                $('#materialsModal').modal('show');
+            }
         });
     </script>
 @stop

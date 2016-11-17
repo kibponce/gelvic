@@ -17,10 +17,6 @@ class Manpower extends Model
         'rate' => 'required | numeric',
     );
 
-    public function po_manpower()
-    {
-       return $this->hasMany('App\ProjectOrderManpower', 'manpower_id', 'id');
-    }
 
     public function po_daily_manpower()
     {

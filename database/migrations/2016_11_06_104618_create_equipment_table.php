@@ -17,7 +17,7 @@ class CreateEquipmentTable extends Migration
             $table->increments('id');
             $table->string('equipment_id');
             $table->string('name');
-            $table->decimal('rate');
+            $table->decimal('rate', 20, 2);
             $table->timestamps();
             $table->softDeletes();
         });

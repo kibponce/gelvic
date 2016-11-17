@@ -3,7 +3,8 @@
 use App\ProjectOrder;
 use App\ProjectOrderDaily;
 use App\Manpower;
-use App\ProjectOrderManpower;
+use App\Position;
+use App\ProjectOrderMaterials;
 use App\ProjectOrderDailyManpower;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -80,30 +81,48 @@ class ProjectOrderController extends Controller {
     	}
     }
 
-    public function show($id) {
+    public function show($id, Request $request) {
         $projectOrder = ProjectOrder::find($id);
         $projectDaily = ProjectOrderDaily::where('po_id', $id)->get();
         $projectTotalExpenses = 0;
+        //Get Total Expenses on all PO Dailies
         foreach ($projectDaily as $k=>$v) {
-        	$v->totalCost = $v->getTotalCost();
+            $dateFormatted = new Carbon($v->date);
+        	
+            $v->isSunday = $dateFormatted->dayOfWeek == Carbon::SUNDAY;
+
+            $dayStatus = "NORMAL";
+            if($v->isSunday && !$v->isHoliday) {
+                $dayStatus = "SUNDAY";
+            }else if(!$v->isSunday && $v->isHoliday){
+                $dayStatus = "HOLIDAY";
+            }else if($v->isSunday && $v->isHoliday){
+                $dayStatus = "SUNDAYHOLIDAY";
+            }
+
+            $v->totalCost = $v->getTotalCost($dayStatus);
+
         	$projectTotalExpenses = $projectTotalExpenses + $v->totalCost;
         }
 
-        $manpower = Manpower::whereDoesntHave('po_manpower', function ($query) use ($id) {
-		    $query->where('po_id', '=', $id);
-		})->get();
-        $projectOrderManpower = ProjectOrderManpower::where('po_id', $id)->get();
-        foreach ($projectOrderManpower as $k=>$v) {
-        	$v->manpower = Manpower::find($v->manpower_id);
+        //Get All Materials on the PO
+        $totalMaterialsExpense = 0;
+        $projectOrderMaterials = ProjectOrderMaterials::where('po_id', $id)->get();
+        foreach ($projectOrderMaterials as $k=>$v) {
+        	$v->total_amount = ($v->quantity * $v->unit_cost) * $v->duration;
+        	$totalMaterialsExpense = $totalMaterialsExpense + $v->total_amount;
+        	$projectTotalExpenses = $projectTotalExpenses + $v->total_amount;
         }
 
+        $error = $request->get('error');
         $data = array(
             "projectOrder" => $projectOrder,
             "projectDaily" => $projectDaily,
-            "manpower" => $manpower,
-            "projectOrderManpower" => $projectOrderManpower,
+            "projectOrderMaterials" => $projectOrderMaterials,
             "projectTotalExpenses" => $projectTotalExpenses,
-            "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses
+            "totalMaterialsExpense" => $totalMaterialsExpense,
+            "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses,
+            "error" => $error
         );
 
         return view('components.project-order.project-order-details', $data);
@@ -131,50 +150,86 @@ class ProjectOrderController extends Controller {
 
     public function showProjectDaily($po_daily_id){
     	$projectDaily = ProjectOrderDaily::find($po_daily_id);
+        $dateFormatted = new Carbon($projectDaily->date);
+        $projectDaily->date = $dateFormatted->format("m/d/Y");
+        $projectDaily->isSunday = $dateFormatted->dayOfWeek == Carbon::SUNDAY;
     	$po_id = $projectDaily->po_id;
-        $manpower = projectOrderManpower::where('po_id', $po_id)->whereDoesntHave('po_daily_manpower', function ($query) use ($po_daily_id) {
+        $manpower = Manpower::whereDoesntHave('po_daily_manpower', function ($query) use ($po_daily_id) {
 		    $query->where('po_daily_id', '=', $po_daily_id);
 		})->get();
 
-		foreach ($manpower as $k=>$v) {
-			$v->manpower = Manpower::find($v->manpower_id);
-		}
+		$projectOrderDailyManpower = ProjectOrderDailyManpower::where('po_daily_id', $po_daily_id)->get();
 
-		$projectOrderDailyManpower = projectOrderDailyManpower::where('po_daily_id', $po_daily_id)->get();
 
-		$totalExpenses = 0;
+        $total = (object)[];
+        $totalA = (object)[];
+        $totalB = (object)[];
+        $totalC = (object)[];
+
+        $typeA = array();
+        $typeB = array();
+        $typeC = array();
+
+        $dayStatus = "NORMAL";
+        if($projectDaily->isSunday && !$projectDaily->isHoliday) {
+            $dayStatus = "SUNDAY";
+        }else if(!$projectDaily->isSunday && $projectDaily->isHoliday){
+            $dayStatus = "HOLIDAY";
+        }else if($projectDaily->isSunday && $projectDaily->isHoliday){
+            $dayStatus = "SUNDAYHOLIDAY";
+        }
+
 		foreach ($projectOrderDailyManpower as $k=>$v) {
 			$v->manpower = Manpower::find($v->manpower_id);
+
+            $type = Position::$position[$v->manpower->position];
 			$time_in = "";
 			$time_out = "";
-			$total = 0;
 
 			if($v->in) {
 				$time_in = new Carbon($v->in);
-				$time_in = $time_in->format('h:i A');
-				$startTime = Carbon::parse($v->in);
-				
+				$time_in = $time_in->format('h:i A');				
 			}
 			
 			if($v->out) {
 				$time_out = new Carbon($v->out);
 				$time_out = $time_out->format('h:i A');
-				$finishTime = Carbon::parse($v->out);
-				$total = $finishTime->diffInHours($startTime);
-			}
-			
+			}			
+
 			$v->time_in = $time_in;
 			$v->time_out = $time_out;
-			$v->total = $total;
-			$v->totalCost = $total * $v->rate;
-			$totalExpenses = $totalExpenses + $v->totalCost;
+
+            switch($type) {
+                case "TYPE_A":
+                    array_push($typeA, $v);
+                    break;
+                case "TYPE_B":
+                    array_push($typeB, $v);
+                    break;
+                case "TYPE_C":
+                    array_push($typeC, $v);
+                    break;
+                default:
+            }
 		}
+
+
+        $totalA = ProjectOrderDailyManpower::getTotal($typeA, $dayStatus);
+        $totalB = ProjectOrderDailyManpower::getTotal($typeB, $dayStatus);
+        $totalC = ProjectOrderDailyManpower::getTotal($typeC, $dayStatus);
+        $total  = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $dayStatus);
 
     	$data = array(
             "projectDaily" => $projectDaily,
             "manpower" => $manpower,
             "projectOrderDailyManpower" => $projectOrderDailyManpower,
-            "totalExpenses" => $totalExpenses
+            "typeA" =>$typeA,
+            "totalA" =>$totalA,
+            "typeB" =>$typeB,
+            "totalB" =>$totalB,
+            "typeC" =>$typeC,
+            "totalC" =>$totalC,
+            "total" =>$total
         );
 
         return view('components.project-order.project-daily', $data);
@@ -218,17 +273,36 @@ class ProjectOrderController extends Controller {
     	$manpower_daily = ProjectOrderDailyManpower::find($id);
     	$project_daily = ProjectOrderDaily::find($manpower_daily->po_daily_id);
     	$date = $project_daily->date;
-    	$dateTime_in = new \DateTime($date." ".$in);
-    	$dateTime_out = new \DateTime($date." ".$out);
+    	$dateTime_in = Carbon::createFromFormat('Y-m-d H:i a', $in);
+    	$dateTime_out = Carbon::createFromFormat('Y-m-d H:i a', $out);
 
     	$time_in = Carbon::instance($dateTime_in);
     	$time_out = Carbon::instance($dateTime_out);
- 
+        
     	$manpower_daily->in = $time_in->toDateTimeString();
     	$manpower_daily->out = $time_out->toDateTimeString();
     	if($manpower_daily->save()){
     		return redirect()->action('ProjectOrderController@showProjectDaily', $manpower_daily->po_daily_id)->with('success', 'Manpower Time Log is updated');
     	}
+    }
+
+    public function updateActivity(Request $request) {
+        $activity = $request->input("activity");
+        $daily_id = $request->input("daily_id");
+        $holiday = $request->input("holiday");
+        $daily = ProjectOrderDaily::find($daily_id);
+        $daily->isHoliday = intval($holiday);
+        $daily->activity = $activity;
+        if($daily->save()){
+            return redirect()->action('ProjectOrderController@showProjectDaily', $daily->id)->with('success', 'Daily Activty is succesfully updated');
+        }
+    }
+
+    public function deleteDailyManpower($id, $po_daily_id) {
+        $manpower_daily = ProjectOrderDailyManpower::find($id);
+
+        $manpower_daily->delete();
+        return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Manpower is succesfully removed');
     }
 }
 

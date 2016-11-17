@@ -15,13 +15,14 @@ class CreatePoDailiesTable extends Migration
     {
         Schema::create('po_dailies', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('po_id')->unsigned();
+            $table->integer('po_id')->unsigned()->nullable();
             $table->foreign('po_id')
                     ->references('id')
                     ->on('po')
                     ->onDelete('cascade');
             $table->date('date');
             $table->boolean('status')->default(0);
+            $table->text('activity')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

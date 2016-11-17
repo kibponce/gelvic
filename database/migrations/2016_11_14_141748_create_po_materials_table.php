@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePoManpowerTable extends Migration
+class CreatePoMaterialsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,20 @@ class CreatePoManpowerTable extends Migration
      */
     public function up()
     {
-        Schema::create('po_manpower', function (Blueprint $table) {
+        Schema::create('po_materials', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('po_id')->unsigned();
             $table->foreign('po_id')
                     ->references('id')
                     ->on('po')
                     ->onDelete('cascade');
-            $table->integer('manpower_id')->unsigned();
-            $table->foreign('manpower_id')
-                    ->references('id')
-                    ->on('manpower')
-                    ->onDelete('cascade');        
+            $table->string('description');
+            $table->integer('quantity');
+            $table->string('unit');
+            $table->decimal('unit_cost', 20, 2);
+            $table->integer('duration');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -36,6 +37,6 @@ class CreatePoManpowerTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('po_manpower');
+        Schema::dropIfExists('po_materials');
     }
 }

@@ -86,14 +86,14 @@
                                     <label>Position</label>
 
                                     <select class="form-control" name="position">
-                                        @foreach ($positions as $position)
-                                            <option value="{{$position}}"
+                                        @foreach ($positions as $k=>$v)
+                                            <option value="{{$k}}"
                                                     @if($manpower) 
-                                                        @if($position == $manpower->position)
+                                                        @if($k == $manpower->position)
                                                             selected
                                                         @endif
                                                     @endif
-                                                    > {{$position}} </option>
+                                                    > {{$k}} </option>
                                         @endforeach
                                     </select>
                                     @if ($errors->has('position'))

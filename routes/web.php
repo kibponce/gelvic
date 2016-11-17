@@ -24,6 +24,13 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::get('/delete-manpower/{id?}', 'ProjectOrderController@deleteManpowerFromProject');
     Route::get('/assign-daily-manpower/{po_daily_id?}/{manpower_id}', 'ProjectOrderController@assignManpowerToProjectDaily');
     Route::post('/daily-log/', 'ProjectOrderController@postManpowerDailyLog');
+    Route::post('/update-daily-activty/', 'ProjectOrderController@updateActivity');
+    Route::get('/delete-daily-manpower/{id?}/{po_daily_id?}', 'ProjectOrderController@deleteDailyManpower');
+});
+
+Route::group(['prefix' => 'materials'], function () {
+    Route::post('/post', 'MaterialsController@post');
+    Route::get('/delete/{id?}/{po_id?}', 'MaterialsController@delete');
 });
 
 Route::group(['prefix' => 'manpower'], function () {
