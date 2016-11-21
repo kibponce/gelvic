@@ -4,6 +4,7 @@ use App\ProjectOrder;
 use App\ProjectOrderDaily;
 use App\Manpower;
 use App\Position;
+use App\Equipment;
 use App\ProjectOrderMaterials;
 use App\ProjectOrderDailyManpower;
 use Illuminate\Http\Request;
@@ -48,7 +49,8 @@ class ProjectOrderController extends Controller {
     	    $start_date = $request->input('start_date');
     	    $end_date = $request->input('end_date');
     	    $area = $request->input('area');
-    	    $description = $request->input('description');
+            $description = $request->input('description');
+    	    $deliver_to = $request->input('deliver_to');
 
     	    if($id != "") {
 	       		$po = ProjectOrder::find($id);
@@ -62,15 +64,15 @@ class ProjectOrderController extends Controller {
     	    $po->start_date = $start_date;
     	    $po->end_date = $end_date;
     	    $po->area = $area;
-    	    $po->description = $description;
+            $po->description = $description;
+    	    $po->deliver_to = $deliver_to;
 
     	    if($po->save()){
     	        if($id != "") {
     	            return redirect()->action('ProjectOrderController@add', $id)->with('success', 'Manpower has been successfully saved');
     	        } else {
     	            return redirect()->action('ProjectOrderController@add')->with('success', 'Manpower has been successfully saved');
-    	        }               
-    	       
+    	        }                  
     	    }
     	}else{
     	    if($id != "") {
@@ -84,7 +86,9 @@ class ProjectOrderController extends Controller {
     public function show($id, Request $request) {
         $projectOrder = ProjectOrder::find($id);
         $projectDaily = ProjectOrderDaily::where('po_id', $id)->get();
+        $equipments = Equipment::all();
         $projectTotalExpenses = 0;
+
         //Get Total Expenses on all PO Dailies
         foreach ($projectDaily as $k=>$v) {
             $dateFormatted = new Carbon($v->date);
@@ -116,6 +120,7 @@ class ProjectOrderController extends Controller {
 
         $error = $request->get('error');
         $data = array(
+            "equipments" => $equipments,
             "projectOrder" => $projectOrder,
             "projectDaily" => $projectDaily,
             "projectOrderMaterials" => $projectOrderMaterials,

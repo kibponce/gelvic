@@ -117,11 +117,19 @@
                             </div>
                         </div>
                     </div>
+                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Deliver To</label>
+                                <textarea class="form-control" name="deliver_to">@if(old('deliver_to')) {{old('deliver_to')}}@elseif($projectOrder){{$projectOrder->deliver_to}}@endif</textarea>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Description</label>
-                                <textarea class="form-control" name="description"> @if(old('description')) {{old('description')}}@elseif($projectOrder){{$projectOrder->description}}@endif </textarea>
+                                <textarea class="form-control" name="description">@if(old('description')) {{old('description')}}@elseif($projectOrder){{$projectOrder->description}}@endif</textarea>
                             </div>
                         </div>
                     </div>

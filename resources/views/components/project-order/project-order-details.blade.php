@@ -161,7 +161,7 @@
                             
                             @if(count($projectOrderMaterials) == 0)
                                 <tr>
-                                    <td colspan="6" class="text-center">No Items Added</td>
+                                    <td colspan="7" class="text-center">No Items Added</td>
                                 </tr>
                             @else
                                 <tr style="background-color: #95ec90;">
@@ -175,6 +175,42 @@
         	    </div>
         	    <!-- /.panel-body -->
             </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-building fa-fw"></i> Equipment
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="modal" data-target="#equipmentsModal">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Name</th>
+                                    <th class="text-right">Rate</th>
+                                    <th class="text-center">Duration</th>
+                                    <th class="text-right">Expense</th>
+                                    <th class="text-right">Profit</th>
+                                    <th class="text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if(count($projectOrderMaterials) == 0)
+                                    <tr>
+                                        <td colspan="6" class="text-center">No Items Added</td>
+                                    </tr>
+                                @else
+                                    
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
         </div>
     </div>
 @stop
@@ -214,7 +250,7 @@
     <!-- /.modal-dialog -->
 
 
-    <!-- Manpower Modal -->
+    <!-- Materials Modal -->
     <div class="modal fade" id="materialsModal" tabindex="-2" role="dialog" aria-labelledby="materialsModal" aria-hidden="true">
         <div class="modal-dialog">
             {!! Form::open(array('action' => 'MaterialsController@post')) !!}
@@ -278,6 +314,71 @@
                                 <input type="text" class="form-control" placeholder="Enter Duration" name="duration" value="@if(old('endif')) {{old('endif')}} @endif">
                                 @if ($errors->has('duration'))
                                     <p class="help-block">{{ $errors->first('duration') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+            {!! Form::close() !!}
+            <!-- /.modal-content -->
+        </div>
+    </div>
+    <!-- /.modal-dialog -->
+
+    <!-- Materials Modal -->
+    <div class="modal fade" id="equipmentsModal" tabindex="-2" role="dialog" aria-labelledby="equipmentsModal" aria-hidden="true">
+        <div class="modal-dialog">
+            {!! Form::open(array('action' => 'MaterialsController@post')) !!}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Materials Form</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('description')) has-error  @endif">
+                                <label>Description</label>
+                                <select class="form-control" name="name">
+                                    <option value="">All Equipments</option>
+                                    @foreach($equipments as $k=>$v)
+                                        <option value="{{$v->id}}">{{$v->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('rate')) has-error  @endif">
+                                <label>Rate</label>
+                                <input type="text" class="form-control" placeholder="Enter Rate" name="rate" value="@if(old('rate')) {{old('rate')}} @endif">
+                                @if ($errors->has('rate'))
+                                    <p class="help-block">{{ $errors->first('rate') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('duration')) has-error  @endif">
+                                <label>Duration</label>
+                                <input type="text" class="form-control" placeholder="Enter Unit" name="duration" value="@if(old('duration')){{old('duration')}}@endif">
+                                @if ($errors->has('duration'))
+                                    <p class="help-block">{{ $errors->first('duration') }} </p>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('expense')) has-error  @endif">
+                                <label>Expense</label>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">PHP</span>
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="expense" value="@if(old('expense')){{old('expense')}}@endif">
+                                </div>
+                                @if ($errors->has('expense'))
+                                    <p class="help-block">{{ $errors->first('expense') }} </p>
                                 @endif
                             </div>
                         </div>
