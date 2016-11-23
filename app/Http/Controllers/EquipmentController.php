@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 use App\Equipment;
+use App\ProjectOrderEquipment;
 use Illuminate\Http\Request;
 
 use Validator;
@@ -67,4 +68,37 @@ class EquipmentController extends Controller {
     		}
     	}
     }
+
+    public function projectPost(Request $request) {
+        $po_id = $request->input('po_id');
+        $validate = Validator::make($request->all(), Equipment::$validation_rules);
+        if ($validate->passes()) {
+            $equipment = $request->input('equipment');
+            $equipmentData = Equipment::find($equipment);
+            $duration = $request->input('duration');
+            $rate = $equipmentData->rate;
+            $expense = $request->input('expense') || 0;
+
+            $projectEquipment = new ProjectOrderEquipment;
+            $projectEquipment->equipment_id = $equipment;
+            $projectEquipment->po_id = $po_id;
+            $projectEquipment->duration = $duration;
+            $projectEquipment->rate = $rate;
+            $projectEquipment->expense = $expense;
+            if($projectEquipment->save()){
+                return redirect()->action('ProjectOrderController@show', $po_id)->with('success', 'Equipment has been successfully added');
+            }
+        }else{
+            return redirect()->action('ProjectOrderController@show', array( 'id' => $po_id, 'error' => "EQUIPMENT"))->withErrors($validate)->withInput();
+        }
+    }
+
+    public function projectDelete($id, $po_id){
+        $po_equipment = ProjectOrderEquipment::find($id);
+
+        if($po_equipment->delete()){
+            return redirect()->action('ProjectOrderController@show', $po_id)->with('success', 'Equipment has been successfully removed');
+        }
+    }
+
 }

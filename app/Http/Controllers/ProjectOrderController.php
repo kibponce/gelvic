@@ -7,9 +7,11 @@ use App\Position;
 use App\Equipment;
 use App\ProjectOrderMaterials;
 use App\ProjectOrderDailyManpower;
+use App\ProjectOrderEquipment;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+use PDF;
 use Validator;
 use Redirect;
 use Input;
@@ -87,7 +89,19 @@ class ProjectOrderController extends Controller {
         $projectOrder = ProjectOrder::find($id);
         $projectDaily = ProjectOrderDaily::where('po_id', $id)->get();
         $equipments = Equipment::all();
+        $projectEquipment = ProjectOrderEquipment::where('po_id', $id)->get();
         $projectTotalExpenses = 0;
+
+        $projectEquipmentTotalExpense = 0;
+        $projectEquipmentTotaProfit = 0;
+        //Process Project Equipment Raw Data
+        foreach ($projectEquipment as $k=>$v) {
+            $v->equipment = Equipment::find($v->equipment_id);
+            $v->profit = $v->rate * $v->duration;
+            $projectEquipmentTotaProfit = $projectEquipmentTotaProfit + $v->profit;
+            $projectEquipmentTotalExpense = $projectEquipmentTotalExpense + $v->expense;
+             $projectTotalExpenses = $projectTotalExpenses + $v->expense;
+        }
 
         //Get Total Expenses on all PO Dailies
         foreach ($projectDaily as $k=>$v) {
@@ -124,6 +138,9 @@ class ProjectOrderController extends Controller {
             "projectOrder" => $projectOrder,
             "projectDaily" => $projectDaily,
             "projectOrderMaterials" => $projectOrderMaterials,
+            "projectEquipment" => $projectEquipment,
+            "projectEquipmentTotalExpense" => $projectEquipmentTotalExpense,
+            "projectEquipmentTotaProfit" => $projectEquipmentTotaProfit,
             "projectTotalExpenses" => $projectTotalExpenses,
             "totalMaterialsExpense" => $totalMaterialsExpense,
             "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses,
@@ -154,89 +171,7 @@ class ProjectOrderController extends Controller {
     }
 
     public function showProjectDaily($po_daily_id){
-    	$projectDaily = ProjectOrderDaily::find($po_daily_id);
-        $dateFormatted = new Carbon($projectDaily->date);
-        $projectDaily->date = $dateFormatted->format("m/d/Y");
-        $projectDaily->isSunday = $dateFormatted->dayOfWeek == Carbon::SUNDAY;
-    	$po_id = $projectDaily->po_id;
-        $manpower = Manpower::whereDoesntHave('po_daily_manpower', function ($query) use ($po_daily_id) {
-		    $query->where('po_daily_id', '=', $po_daily_id);
-		})->get();
-
-		$projectOrderDailyManpower = ProjectOrderDailyManpower::where('po_daily_id', $po_daily_id)->get();
-
-
-        $total = (object)[];
-        $totalA = (object)[];
-        $totalB = (object)[];
-        $totalC = (object)[];
-
-        $typeA = array();
-        $typeB = array();
-        $typeC = array();
-
-        $dayStatus = "NORMAL";
-        if($projectDaily->isSunday && !$projectDaily->isHoliday) {
-            $dayStatus = "SUNDAY";
-        }else if(!$projectDaily->isSunday && $projectDaily->isHoliday){
-            $dayStatus = "HOLIDAY";
-        }else if($projectDaily->isSunday && $projectDaily->isHoliday){
-            $dayStatus = "SUNDAYHOLIDAY";
-        }
-
-		foreach ($projectOrderDailyManpower as $k=>$v) {
-			$v->manpower = Manpower::find($v->manpower_id);
-
-            $type = Position::$position[$v->manpower->position];
-			$time_in = "";
-			$time_out = "";
-
-			if($v->in) {
-				$time_in = new Carbon($v->in);
-				$time_in = $time_in->format('h:i A');				
-			}
-			
-			if($v->out) {
-				$time_out = new Carbon($v->out);
-				$time_out = $time_out->format('h:i A');
-			}			
-
-			$v->time_in = $time_in;
-			$v->time_out = $time_out;
-
-            switch($type) {
-                case "TYPE_A":
-                    array_push($typeA, $v);
-                    break;
-                case "TYPE_B":
-                    array_push($typeB, $v);
-                    break;
-                case "TYPE_C":
-                    array_push($typeC, $v);
-                    break;
-                default:
-            }
-		}
-
-
-        $totalA = ProjectOrderDailyManpower::getTotal($typeA, $dayStatus);
-        $totalB = ProjectOrderDailyManpower::getTotal($typeB, $dayStatus);
-        $totalC = ProjectOrderDailyManpower::getTotal($typeC, $dayStatus);
-        $total  = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $dayStatus);
-
-    	$data = array(
-            "projectDaily" => $projectDaily,
-            "manpower" => $manpower,
-            "projectOrderDailyManpower" => $projectOrderDailyManpower,
-            "typeA" =>$typeA,
-            "totalA" =>$totalA,
-            "typeB" =>$typeB,
-            "totalB" =>$totalB,
-            "typeC" =>$typeC,
-            "totalC" =>$totalC,
-            "total" =>$total
-        );
-
+    	$data = ProjectOrderDaily::processProjectDialy($po_daily_id);
         return view('components.project-order.project-daily', $data);
     }
 
@@ -308,6 +243,15 @@ class ProjectOrderController extends Controller {
 
         $manpower_daily->delete();
         return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Manpower is succesfully removed');
+    }
+
+    public function printDaily($po_daily_id) {
+        $data = ProjectOrderDaily::processProjectDialy($po_daily_id);
+
+        $pdf = PDF::loadView('components.project-order.print.daily', $data);
+
+        // Output the generated PDF to Browser
+        return $pdf->stream();
     }
 }
 

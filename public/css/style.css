@@ -9,7 +9,14 @@
 }
 
 #page-wrapper {
-    padding: 30px 30px !important;
+    padding: 30px 30px 30px 30px !important;
+}
+
+.content-header {
+    background-color: #ececec !important;
+    padding: 15px !important;
+    border-bottom: 1px solid #dcdcdc;
+        margin-top: -30px;
 }
 
 .sidebar {
@@ -45,4 +52,8 @@ h4 {
     margin-bottom: 15px;
     border-bottom: 1px solid #e7ecf1;
     margin-top: -15px;
+}
+
+.badge-red {
+    background-color: #a94442;
 }

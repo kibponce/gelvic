@@ -2,10 +2,17 @@
 
 @section('content')
     <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <a type="button" class="btn btn-info btn-sm" href="{{ action('ProjectOrderController@show', $projectDaily->po_id) }}">
-                <i class="fa fa-mail-reply  "></i> Back to Project Order Details
-            </a>
+        <div class="row content-header">
+            <div class="col-lg-4 col-md-4">
+                <a type="button" class="btn btn-info btn-sm" href="{{ action('ProjectOrderController@show', $projectDaily->po_id) }}">
+                    <i class="fa fa-mail-reply  "></i>
+                </a>
+            </div>
+            <div class="col-lg-8 col-md-8">
+                <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printDaily', $projectDaily->id) }}">
+                    <i class="fa fa-print"></i> Print
+                </a>
+            </div>
         </div>
     </div>
     <br />
@@ -22,7 +29,7 @@
         <div class="col-lg-7 col-md-7">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Project Daily Details
+                    <strong>PO #</strong> : {{$projectOrder->po_number}} 
                     <div class="pull-right">
                         <a href="#" class="btn btn-success btn-xs edit-daily" data-toggle="modal" data-target="#activityModal" data-id="{{$projectDaily->id}}">
                             <i class="fa fa-pencil"></i>

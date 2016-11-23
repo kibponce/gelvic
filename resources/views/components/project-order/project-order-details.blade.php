@@ -2,10 +2,12 @@
 
 @section('content') 
     <div class="row">
-        <div class="col-lg-12 col-md-12">
-            <a type="button" class="btn btn-info btn-sm" href="{{ action('ProjectOrderController@index') }}">
-                <i class="fa fa-mail-reply  "></i> Back to Project Order Lists
-            </a>
+        <div class="row content-header">
+            <div class="col-lg-12 col-md-12">
+                <a type="button" class="btn btn-info btn-sm" href="{{ action('ProjectOrderController@index') }}">
+                    <i class="fa fa-mail-reply"></i>
+                </a>
+            </div>
         </div>
     </div>
     <br />
@@ -60,6 +62,7 @@
                         </div>
                         <div class="col-xs-9 text-right">
                             <div class="huge text-danger">{{ number_format($projectTotalExpenses,2) }}</div>
+
                             <div>Expenses (Php)</div>
                         </div>
                     </div>
@@ -75,7 +78,10 @@
                         </div>
                         <div class="col-xs-9 text-right">
                             <div class="huge text-success">{{ number_format($projectRemainingBalance,2) }}</div>
-                            <div>Remaining Balance (Php)</div>
+                            @if($projectEquipmentTotaProfit > 0)
+                                <div class="profit text-success huge" style="font-size: 20px;">+{{number_format($projectEquipmentTotaProfit,2)}}</div>
+                            @endif
+                            <div>Profit (Php)</div>
                         </div>
                     </div>
                 </div>
@@ -102,7 +108,7 @@
                             <a href="{{ action('ProjectOrderController@showProjectDaily', $v->id) }}" class="list-group-item">
                                 <div>
                                     <i class="fa fa-calendar fa-fw"></i> {{$v->date}}
-                                    <span class="pull-right text-muted small badge"><em>{{number_format($v->totalCost, 2)}}</em>
+                                    <span class="pull-right text-muted small badge badge-red"><em>{{number_format($v->totalCost, 2)}}</em>
                                     </span>
                                 </div>
                                 @if($v->isHoliday)
@@ -165,8 +171,8 @@
                                 </tr>
                             @else
                                 <tr style="background-color: #95ec90;">
-                                    <td colspan="5" class="text-right">Total</td>
-                                    <td class="text-right">{{number_format($totalMaterialsExpense, 2)}}</td>
+                                    <td colspan="5" class="text-right"><strong>Total</strong></td>
+                                    <td class="text-right"><strong>{{number_format($totalMaterialsExpense, 2)}}</strong></td>
                                     <td></td>
                                 </tr>
                             @endif
@@ -190,7 +196,7 @@
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
                                 <tr>
-                                    <th class="text-center">Name</th>
+                                    <th class="text-left    ">Name</th>
                                     <th class="text-right">Rate</th>
                                     <th class="text-center">Duration</th>
                                     <th class="text-right">Expense</th>
@@ -199,12 +205,32 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @if(count($projectOrderMaterials) == 0)
+                                @foreach($projectEquipment as $k=>$v)
+                                    <tr>
+                                        <td class="text-left">{{$v->equipment->name}}</td>
+                                        <td class="text-right">{{number_format($v->rate,2)}}</td>
+                                        <td class="text-center">{{$v->duration}}</td>
+                                        <td class="text-right">{{number_format($v->expense,2)}}</td>
+                                        <td class="text-right">{{number_format($v->profit,2)}}</td>
+                                        <td class="text-center">
+                                            <a type="button" class="btn btn-danger btn-xs" href="{{action('EquipmentController@projectDelete', array('id' => $v->id, 'po_id' => $projectOrder->id))}}">
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                @if(count($projectEquipment) == 0)
                                     <tr>
                                         <td colspan="6" class="text-center">No Items Added</td>
                                     </tr>
                                 @else
-                                    
+                                    <tr style="background-color: #95ec90;">
+                                        <td colspan="3" class="text-right"><strong>Total</strong></td>
+                                        <td class="text-right"><strong>{{number_format($projectEquipmentTotalExpense,2)}}</strong></td>
+                                        <td  class="text-right"><strong>{{number_format($projectEquipmentTotaProfit,2)}}</strong></td>
+                                        <td>
+                                        </td>
+                                    </tr>
                                 @endif
                             </tbody>
                         </table>
@@ -333,31 +359,30 @@
     <!-- Materials Modal -->
     <div class="modal fade" id="equipmentsModal" tabindex="-2" role="dialog" aria-labelledby="equipmentsModal" aria-hidden="true">
         <div class="modal-dialog">
-            {!! Form::open(array('action' => 'MaterialsController@post')) !!}
+            {!! Form::open(array('action' => 'EquipmentController@projectPost')) !!}
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Materials Form</h4>
+                    <h4 class="modal-title" id="myModalLabel">Equipments Form</h4>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="form-group @if ($errors->has('description')) has-error  @endif">
+                            <div class="form-group @if ($errors->has('equipment')) has-error  @endif">
                                 <label>Description</label>
-                                <select class="form-control" name="name">
+                                <input class="form-control" 
+                                        placeholder="Enter Description" 
+                                        name="po_id"
+                                        type="hidden"
+                                        value="{{$projectOrder->id}}">
+                                <select class="form-control" name="equipment">
                                     <option value="">All Equipments</option>
                                     @foreach($equipments as $k=>$v)
                                         <option value="{{$v->id}}">{{$v->name}}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                        </div>
-                        <div class="col-lg-12">
-                            <div class="form-group @if ($errors->has('rate')) has-error  @endif">
-                                <label>Rate</label>
-                                <input type="text" class="form-control" placeholder="Enter Rate" name="rate" value="@if(old('rate')) {{old('rate')}} @endif">
-                                @if ($errors->has('rate'))
-                                    <p class="help-block">{{ $errors->first('rate') }} </p>
+                                @if ($errors->has('equipment'))
+                                    <p class="help-block">{{ $errors->first('equipment') }} </p>
                                 @endif
                             </div>
                         </div>
@@ -409,6 +434,10 @@
 
             if(error === "MATERIALS") {
                 $('#materialsModal').modal('show');
+            }
+
+            if(error === "EQUIPMENT") {
+                $('#equipmentsModal').modal('show');
             }
         });
     </script>

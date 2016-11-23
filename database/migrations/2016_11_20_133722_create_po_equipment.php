@@ -20,9 +20,14 @@ class CreatePoEquipment extends Migration
                     ->references('id')
                     ->on('equipment')
                     ->onDelete('cascade');
+            $table->integer('po_id')->nullable()->unsigned();
+            $table->foreign('po_id')
+                    ->references('id')
+                    ->on('po')
+                    ->onDelete('cascade');
             $table->decimal("expense", 20, 2)->nullable();
-            $table->integer("rate");
-            $table->integer("duration");
+            $table->decimal("rate", 20, 2);
+            $table->integer("duration")->nullable();
             $table->timestamps();
         });
     }

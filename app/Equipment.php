@@ -9,8 +9,7 @@ class Equipment extends Model
     protected $table = 'equipment';
 
     public static $validation_rules = array(
-        'equipment_id' => 'required | unique:equipment',
-        'name' => 'required | max:255',
-        'rate' => 'required | numeric',
+        'equipment' => 'required',
+        'duration' => 'required | numeric',
     );
 }
