@@ -120,7 +120,7 @@
                             @endif
                             @foreach ($typeA as $k=>$v)
                                 <tr>
-                                    <td>{{$k}}</td>
+                                    <td>{{$k + 1}}</td>
                                     <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} </td>
                                     <td width="80">{{$v->time_in}}</td>
                                     <td width="80">{{$v->time_out}}</td>
@@ -166,7 +166,7 @@
                             @endif
                             @foreach ($typeB as $k=>$v)
                                 <tr>
-                                    <td>{{$k}}</td>
+                                    <td>{{$k + 1}}</td>
                                     <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} </td>
                                     <td width="80">{{$v->time_in}}</td>
                                     <td width="80">{{$v->time_out}}</td>
@@ -211,7 +211,7 @@
                             @endif
                             @foreach ($typeC as $k=>$v)
                                 <tr>
-                                    <td>{{$k}}</td>
+                                    <td>{{$k + 1}}</td>
                                     <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} </td>
                                     <td width="80">{{$v->time_in}}</td>
                                     <td width="80">{{$v->time_out}}</td>

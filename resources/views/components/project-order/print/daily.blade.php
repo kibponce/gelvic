@@ -90,7 +90,7 @@
 	    	@endif
 	        @foreach ($typeA as $k=>$v)
 	            <tr>
-	                <td>{{$k}}</td>
+	                <td>{{$k + 1}}</td>
 	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name[0])}} </td>
 	                <td class="text-right">{{number_format($v->rate,2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularTotalHour, 2)}}</td>
@@ -123,7 +123,7 @@
 	        @endif 
 	        @foreach ($typeB as $k=>$v)
 	            <tr>
-	                <td>{{$k}}</td>
+	                <td>{{$k + 1}}</td>
 	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name[0])}} </td>
 	                <td class="text-right">{{number_format($v->rate,2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularTotalHour, 2)}}</td>
@@ -155,7 +155,7 @@
 	        @endif
 	        @foreach ($typeC as $k=>$v)
 	            <tr>
-	                <td>{{$k}}</td>
+	                <td>{{$k + 1}}</td>
 	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name[0])}} </td>
 	                <td class="text-right">{{number_format($v->rate,2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularTotalHour, 2)}}</td>
