@@ -395,7 +395,7 @@
                             <div class="col-md-12">
                                 <label>Activity</label>
                                 <input type='hidden' class="form-control" name="daily_id" id="daily_id" value=""/>
-                                <textarea class="form-control" name="activity" placeholder="Enter Activity" value="">{{$projectDaily->activity}}</textarea>
+                                <textarea style="height: 300px;" class="form-control" name="activity" placeholder="Enter Activity" value="">{{$projectDaily->activity}}</textarea>
                             </div>
                         </div>
                     </div>

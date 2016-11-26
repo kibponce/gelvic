@@ -119,6 +119,13 @@
                                 @endif
                             </a>
                         @endforeach
+                        <a href="javascript://" class="list-group-item">
+                            <div>
+                                <strong>TOTAL</strong>  
+                                <span class="pull-right text-muted small badge badge-red"><em>{{number_format($projectManpowerTotalExpense,2)}}</em>
+                                </span>
+                            </div>
+                        </a>
                     </div>
                 </div>
                 <!-- /.panel-body -->
@@ -196,7 +203,7 @@
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
                                 <tr>
-                                    <th class="text-left    ">Name</th>
+                                    <th class="text-left">Name</th>
                                     <th class="text-right">Rate</th>
                                     <th class="text-center">Duration</th>
                                     <th class="text-right">Expense</th>

@@ -107,8 +107,20 @@
                                     <div class="form-group input-group">
                                         <span class="input-group-addon">PHP
                                         </span>
-                                        <input type="text" class="form-control" placeholder="0.00" name="rate" value="@if(old('rate')) {{old('rate')}}@elseif($manpower){{$manpower->rate}}@endif"">
+                                        <input type="text" class="form-control" id="hour_rate" placeholder="0.00" name="rate" value="@if(old('rate')) {{old('rate')}}@elseif($manpower){{$manpower->rate}}@endif">
+                                        <span class="input-group-addon">
+                                            /Hour
+                                        </span>
                                     </div>
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">PHP
+                                        </span>
+                                        <input type="text" class="form-control" id="reg_rate" placeholder="0.00" name="" value="">
+                                        <span class="input-group-addon">
+                                        Regular Rate
+                                        </span>
+                                    </div>
+                                    
                                     @if ($errors->has('rate'))
                                         <p class="help-block">{{ $errors->first('rate') }} </p>
                                     @endif
@@ -136,9 +148,33 @@
 @section('scripts')
     <script type="text/javascript">
         $(function () {
+            var hourRate = $('#hour_rate'),
+                regRate = $('#reg_rate'),
+                totalHourRate,
+                totalRegRate;
+
             $('#datetimepicker1').datetimepicker({
                 format : "YYYY-MM-DD"
             });
+
+            function getHourRate(){
+                return regRate.val() > 0 || regRate.val() != "" ? parseFloat(regRate.val()) / 8 : 0;
+            }
+
+            function getRegRate(){
+                return hourRate.val() > 0 || hourRate.val() != "" ? parseFloat(hourRate.val()) * 8 : 0;
+            }
+
+            hourRate.on('keyup', function (){
+                regRate.val(parseFloat(getRegRate()).toFixed(2));
+            });
+
+            regRate.on('keyup', function (){
+                hourRate.val(parseFloat(getHourRate()).toFixed(2));  
+            });
+
+            regRate.val(parseFloat(getRegRate()).toFixed(2));
+            hourRate.val(parseFloat(getHourRate()).toFixed(2)); 
         });
     </script>
 @stop

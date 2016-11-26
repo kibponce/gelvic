@@ -5,9 +5,25 @@ use Illuminate\Database\Eloquent\Model;
 
 class Position extends Model {
     public static $position = array(
+            // TYPE A
             "SUPERVISOR" => "TYPE_A",
-            "SAFETY OFFICER" => "TYPE_B",
-            "WIELDER" => "TYPE_B",
-            "CARPENTER" => "TYPE_C"
+            "LEADMAN" => "TYPE_A",
+            "SAFETY_OFFICER" => "TYPE_A",
+            "WIELDER_A" => "TYPE_A",
+            "ELECTRICIAN_A" => "TYPE_A",
+            "MACHINIST" => "TYPE_A",
+            "DRIVER_A" => "TYPE_A",
+
+            // TYPE B
+            "WIELDER_B" => "TYPE_B",
+            "OPERATOR" => "TYPE_B",
+            "ELECTRICIAN_B" => "TYPE_B",
+            "DRIVER_B" => "TYPE_B",
+
+            // TYPE C
+            "WIELDER_C" => "TYPE_C",
+            "CARPENTER" => "TYPE_C",
+            "ELECTRICIAN_C" => "TYPE_C",
+            "HELPER" => "TYPE_C",
         );
 }

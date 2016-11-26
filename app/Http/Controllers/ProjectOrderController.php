@@ -103,12 +103,14 @@ class ProjectOrderController extends Controller {
              $projectTotalExpenses = $projectTotalExpenses + $v->expense;
         }
 
+        $projectManpowerTotalExpense = 0;
         //Get Total Expenses on all PO Dailies
         foreach ($projectDaily as $k=>$v) {
             $dateFormatted = new Carbon($v->date);
         	
             $v->isSunday = $dateFormatted->dayOfWeek == Carbon::SUNDAY;
 
+            //Determine day status
             $dayStatus = "NORMAL";
             if($v->isSunday && !$v->isHoliday) {
                 $dayStatus = "SUNDAY";
@@ -119,7 +121,10 @@ class ProjectOrderController extends Controller {
             }
 
             $v->totalCost = $v->getTotalCost($dayStatus);
+            //Total All manpower Expense
+            $projectManpowerTotalExpense = $projectManpowerTotalExpense + $v->totalCost;
 
+            //Include Total Expense on Project
         	$projectTotalExpenses = $projectTotalExpenses + $v->totalCost;
         }
 
@@ -141,6 +146,7 @@ class ProjectOrderController extends Controller {
             "projectEquipment" => $projectEquipment,
             "projectEquipmentTotalExpense" => $projectEquipmentTotalExpense,
             "projectEquipmentTotaProfit" => $projectEquipmentTotaProfit,
+            "projectManpowerTotalExpense" => $projectManpowerTotalExpense,
             "projectTotalExpenses" => $projectTotalExpenses,
             "totalMaterialsExpense" => $totalMaterialsExpense,
             "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses,
