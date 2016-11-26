@@ -61,23 +61,21 @@ class EquipmentController extends Controller {
     	    	return $this->redirect_to_equipment_add->with('error', 'Equipment save error');
     	    }
     	}else{
-    		if($id != "") {
-    		    return redirect()->action('EquipmentController@add', $id)->with('success', 'Equipment has been successfully saved');
-    		}else{
+
     			return $this->redirect_to_equipment_add->withErrors($validate)->withInput();
-    		}
+    		
     	}
     }
 
     public function projectPost(Request $request) {
         $po_id = $request->input('po_id');
-        $validate = Validator::make($request->all(), Equipment::$validation_rules);
+        $validate = Validator::make($request->all(), Equipment::$validation_rules_po);
         if ($validate->passes()) {
             $equipment = $request->input('equipment');
             $equipmentData = Equipment::find($equipment);
             $duration = $request->input('duration');
             $rate = $equipmentData->rate;
-            $expense = $request->input('expense') || 0;
+            $expense = $request->input('expense') != "" ? $request->input('expense') : 0;
 
             $projectEquipment = new ProjectOrderEquipment;
             $projectEquipment->equipment_id = $equipment;

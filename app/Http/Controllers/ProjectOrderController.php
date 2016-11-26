@@ -100,7 +100,7 @@ class ProjectOrderController extends Controller {
             $v->profit = $v->rate * $v->duration;
             $projectEquipmentTotaProfit = $projectEquipmentTotaProfit + $v->profit;
             $projectEquipmentTotalExpense = $projectEquipmentTotalExpense + $v->expense;
-             $projectTotalExpenses = $projectTotalExpenses + $v->expense;
+            $projectTotalExpenses = $projectTotalExpenses + $v->expense;
         }
 
         $projectManpowerTotalExpense = 0;
@@ -149,7 +149,7 @@ class ProjectOrderController extends Controller {
             "projectManpowerTotalExpense" => $projectManpowerTotalExpense,
             "projectTotalExpenses" => $projectTotalExpenses,
             "totalMaterialsExpense" => $totalMaterialsExpense,
-            "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses,
+            "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses + $projectEquipmentTotaProfit,
             "error" => $error
         );
 
