@@ -30,7 +30,7 @@
     	    border-bottom: 2px solid #ddd;
     	}
     	.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-    	    padding: 8px;
+    	    padding: 2px;
     	    line-height: 1.42857143;
     	    vertical-align: top;
     	    border-top: 1px solid #ddd;
@@ -91,7 +91,7 @@
 	        @foreach ($typeA as $k=>$v)
 	            <tr>
 	                <td>{{$k}}</td>
-	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name)}} </td>
+	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name[0])}} </td>
 	                <td class="text-right">{{number_format($v->rate,2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularTotalHour, 2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularHourPay,2)}}</td>
@@ -124,7 +124,7 @@
 	        @foreach ($typeB as $k=>$v)
 	            <tr>
 	                <td>{{$k}}</td>
-	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name)}} </td>
+	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name[0])}} </td>
 	                <td class="text-right">{{number_format($v->rate,2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularTotalHour, 2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularHourPay,2)}}</td>
@@ -156,7 +156,7 @@
 	        @foreach ($typeC as $k=>$v)
 	            <tr>
 	                <td>{{$k}}</td>
-	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name)}} </td>
+	                <td>{{strtoupper($v->manpower->last_name)}}, {{strtoupper($v->manpower->first_name[0])}} </td>
 	                <td class="text-right">{{number_format($v->rate,2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularTotalHour, 2)}}</td>
 	                <td class="text-right">{{number_format($v->rateAndHours->regularHourPay,2)}}</td>
