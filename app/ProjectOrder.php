@@ -9,7 +9,6 @@ class ProjectOrder extends Model
     protected $table = 'po';
 
     public static $validation_rules = array(
-        'po_number' => 'required | unique:po',
         'type' => 'required | max:255',
         'area' => 'required | max:255',
         'start_date' => 'required | date',

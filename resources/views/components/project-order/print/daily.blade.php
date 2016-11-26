@@ -3,7 +3,7 @@
     <title>Gelvic</title>
     <style>
     	body {
-    		font-size : 11px;
+    		font-size : 12px;
     		font-family: 'Open Sans';
     	}
     	table {
@@ -73,9 +73,9 @@
 	            <th width="70">NAME</th>
 	            <th width="25">RATE</th>
 	            <th class="text-center"># OF HOURS</th>
-	            <th class="text-center" width="40">REG. DAY</th>
+	            <th class="text-center" width="45">REG. DAY</th>
 	            <th class="text-center"># OF HOURS</th>
-	            <th class="text-center" width="40">REG. OT</th>
+	            <th class="text-center" width="45">REG. OT</th>
 	            <th class="text-center"># OF HOURS</th>
 	            <th class="text-center" class="text-center" width="40">REG. NP</th>
 	            <th class="text-center" width="35">TOTAL</th>
