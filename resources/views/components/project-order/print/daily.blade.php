@@ -52,10 +52,10 @@
 <head>
 <body>
 	<div style="text-align: center;">
-		<div><strong style="font-size: 20px;"> GELVIC CONSTRUCTION AND ENGINEERING SERVICES </strong></div>
+		<div><strong style="font-size: 20px; color: #5cb85c;"> GELVIC CONSTRUCTION AND ENGINEERING SERVICES </strong></div>
 		<div><span style="font-size: 15px;"> #0006 Abragan Compound Sto. Rosario, Iligan City </span> </div>
 		<div><strong style="font-size: 15px;"> CONTRACTOR'S DAILY MANPOWER LIST </strong> </div>
-		<div><strong style="font-size: 13px;"> @if($projectDaily->isHoliday) HOLIDAY @endif @if($projectDaily->isSunday) SUNDAY @endif</strong> </div>
+		<div><strong style="font-size: 13px; color: #d9534f;"> @if($projectDaily->isHoliday) HOLIDAY @endif @if($projectDaily->isSunday) SUNDAY @endif</strong> </div>
 	</div>
 	<br/>
 	<div>
