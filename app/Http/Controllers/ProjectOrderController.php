@@ -255,7 +255,8 @@ class ProjectOrderController extends Controller {
         $data = ProjectOrderDaily::processProjectDialy($po_daily_id);
 
         $pdf = PDF::loadView('components.project-order.print.daily', $data);
-
+        $pdf->setPaper('Legal');
+        
         // Output the generated PDF to Browser
         return $pdf->stream();
     }
