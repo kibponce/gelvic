@@ -3,9 +3,14 @@
 @section('content') 
     <div class="row">
         <div class="row content-header">
-            <div class="col-lg-12 col-md-12">
+            <div class="col-lg-4 col-md-4">
                 <a type="button" class="btn btn-info btn-sm" href="{{ action('ProjectOrderController@index') }}">
                     <i class="fa fa-mail-reply"></i>
+                </a>
+            </div>
+            <div class="col-lg-8 col-md-8">
+                <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printSummary', $projectOrder->id) }}">
+                    <i class="fa fa-print"></i> Print Summary
                 </a>
             </div>
         </div>

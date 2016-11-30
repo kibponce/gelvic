@@ -12,6 +12,8 @@ class ProjectOrderDailyManpower extends Model
     const MAX_REG_HOUR = 8; 
 
     public function getRateAndHours() {
+        $paxCount = 0;
+
     	$regTotalHour = 0;
     	$regHourPay = 0;
 
@@ -36,7 +38,11 @@ class ProjectOrderDailyManpower extends Model
     		//return total hours where 12PM is not included
     		$regTotalHour = $finishTime->diffInHours($startTime);
 
-    		
+            if($regTotalHour <= 8){
+                $paxCount = $regTotalHour / 8;
+            }else{
+                $paxCount = 1;
+            }
 
     		//return total hours for OT(above 5pm)
     		if($regTotalHour > self::MAX_REG_HOUR) {
@@ -56,6 +62,8 @@ class ProjectOrderDailyManpower extends Model
     		
     	}
     	     
+        $return->paxCount = $paxCount;
+
     	$return->regularTotalHour = $regTotalHour;
     	$return->regularHourPay = $regHourPay;
 
@@ -72,6 +80,8 @@ class ProjectOrderDailyManpower extends Model
 
     public static function getTotal($data, $day = null) {
         $total = (object)[];
+        //Pax Count
+        $total_pax = 0;
         //Regular
         $total_no_of_hours = 0;
         $total_reg_day= 0;
@@ -90,6 +100,9 @@ class ProjectOrderDailyManpower extends Model
         	$v->day = $day;
             $v->rateAndHours = $v->getRateAndHours(); 
 
+            //Pax Count
+            $total_pax = $total_pax + $v->rateAndHours->paxCount;
+
             //Regular
             $total_no_of_hours = $total_no_of_hours + $v->rateAndHours->regularTotalHour;
             $total_reg_day = $total_reg_day + $v->rateAndHours->regularHourPay;
@@ -105,6 +118,7 @@ class ProjectOrderDailyManpower extends Model
             $totalExpenses = $totalExpenses + $v->rateAndHours->total;
         }
 
+        $total->total_pax = $total_pax;
         $total->total_no_of_hours = $total_no_of_hours;
         $total->total_reg_day = $total_reg_day;
         $total->total_ot_no_hours = $total_ot_no_hours;

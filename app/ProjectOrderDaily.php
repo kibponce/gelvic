@@ -91,6 +91,7 @@ class ProjectOrderDaily extends Model
 	    $total  = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $dayStatus);
 
 		$data = array(
+	        "dayStatus" => $dayStatus,
 	        "projectDaily" => $projectDaily,
 	        "projectOrder" => $projectOrder,
 	        "manpower" => $manpower,

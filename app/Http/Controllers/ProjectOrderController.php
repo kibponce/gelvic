@@ -87,6 +87,11 @@ class ProjectOrderController extends Controller {
 
     public function show($id, Request $request) {
         $projectOrder = ProjectOrder::find($id);
+        $startDateFormatted = new Carbon($projectOrder->start_date);
+        $projectOrder->start_date = $startDateFormatted->format("m/d/Y");
+        $endDateFormatted = new Carbon($projectOrder->end_date);
+        $projectOrder->end_date = $endDateFormatted->format("m/d/Y");
+
         $projectDaily = ProjectOrderDaily::where('po_id', $id)->get();
         $equipments = Equipment::all();
         $projectEquipment = ProjectOrderEquipment::where('po_id', $id)->get();
@@ -107,7 +112,7 @@ class ProjectOrderController extends Controller {
         //Get Total Expenses on all PO Dailies
         foreach ($projectDaily as $k=>$v) {
             $dateFormatted = new Carbon($v->date);
-        	
+            $v->date = $dateFormatted->format("m/d/Y");
             $v->isSunday = $dateFormatted->dayOfWeek == Carbon::SUNDAY;
 
             //Determine day status
@@ -256,6 +261,39 @@ class ProjectOrderController extends Controller {
 
         $pdf = PDF::loadView('components.project-order.print.daily', $data);
         $pdf->setPaper('Legal');
+        
+        // Output the generated PDF to Browser
+        return $pdf->stream();
+    }
+
+    public function printSummary($po_id){
+        $projectDailies = ProjectOrderDaily::where('po_id', $po_id)->get();
+        $total = 0;
+
+        foreach ($projectDailies as $k=>$v) {
+            $dateFormatted = new Carbon($v->date);
+            $v->date = $dateFormatted->format("m/d/Y");
+            $v->dailyData = ProjectOrderDaily::processProjectDialy($v->id);
+            $total = $total + $v->dailyData['total']->total;
+        }
+
+        //Get All Materials on the PO
+        $totalMaterialsExpense = 0;
+        $projectOrderMaterials = ProjectOrderMaterials::where('po_id', $po_id)->get();
+        foreach ($projectOrderMaterials as $k=>$v) {
+            $v->total_amount = ($v->quantity * $v->unit_cost) * $v->duration;
+            $totalMaterialsExpense = $totalMaterialsExpense + $v->total_amount;
+            $total = $total + $v->total_amount;
+        }
+
+        $data = array(
+            "projectDailies" => $projectDailies,
+            "total" => $total,
+            "totalMaterialsExpense" => $totalMaterialsExpense
+        );
+
+        $pdf = PDF::loadView('components.project-order.print.summary', $data);
+        $pdf->setPaper('Legal', 'landscape');
         
         // Output the generated PDF to Browser
         return $pdf->stream();

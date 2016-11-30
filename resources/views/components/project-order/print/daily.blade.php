@@ -26,7 +26,7 @@
     		background: #eaeaea;
     	}
     	.table>thead>tr>th {
-    	    vertical-align: bottom;
+    	    vertical-align: middle;
     	    border-bottom: 2px solid #ddd;
     	}
     	.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
@@ -44,7 +44,7 @@
     	.text-left {
     	    text-align: left;
     	}
-    	.text-left {
+    	.text-center {
     	    text-align: center;
     	}
 
