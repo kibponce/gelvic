@@ -267,6 +267,7 @@ class ProjectOrderController extends Controller {
     }
 
     public function printSummary($po_id){
+        $projectOrder = ProjectOrder::find($po_id);
         $projectDailies = ProjectOrderDaily::where('po_id', $po_id)->get();
         $total = 0;
 
@@ -287,8 +288,10 @@ class ProjectOrderController extends Controller {
         }
 
         $data = array(
+            "projectOrder" => $projectOrder,
             "projectDailies" => $projectDailies,
             "total" => $total,
+            "remainingTotal" => $projectOrder->amount - $total,
             "totalMaterialsExpense" => $totalMaterialsExpense
         );
 

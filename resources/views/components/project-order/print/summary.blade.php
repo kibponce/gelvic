@@ -2,9 +2,22 @@
 <html lang="en">
     <title>Gelvic</title>
     <style>
+    	@font-face {
+    	  font-family: 'Roboto';
+    	  font-weight: 300;
+    	  font-style: normal;
+    	  src: url('../fonts/Roboto-300/Roboto-300.eot');
+    	  src: url('../fonts/Roboto-300/Roboto-300.eot?#iefix') format('embedded-opentype'),
+    	       local('Roboto Light'),
+    	       local('Roboto-300'),
+    	       url('../fonts/Roboto-300/Roboto-300.woff2') format('woff2'),
+    	       url('../fonts/Roboto-300/Roboto-300.woff') format('woff'),
+    	       url('../fonts/Roboto-300/Roboto-300.ttf') format('truetype'),
+    	       url('../fonts/Roboto-300/Roboto-300.svg#Roboto') format('svg');
+    	}
     	body {
     		font-size : 12px;
-    		font-family: 'Open Sans';
+    		font-family: 'Roboto';
     	}
     	table {
     	    background-color: transparent;
@@ -74,7 +87,7 @@
 	    <tbody>
 	    	<tr>
 	    		<td width="30" colspan="14">PO. No</td>
-	    		<td class="text-right"><strong style="font-size: 15px;">{{number_format($total,2)}}</strong></td>
+	    		<td class="text-right"><strong style="font-size: 15px;">{{number_format($projectOrder->amount,2)}}</strong></td>
 	    	</tr>	
 	    	@foreach ($projectDailies as $k=>$v)
 	    		<!-- TYPE A -->
@@ -310,8 +323,12 @@
 	    			<td class="text-right"><strong>{{number_format($totalMaterialsExpense,2)}}</strong></td>
 	    		</tr>
 	    		<tr style="background-color: #f3f3f3;">
-	    			<td colspan="14" class="text-right" style="border-top: 2px solid #000;"></td>
-	    			<td class="text-right" style="border-top: 2px solid #000;"><strong style="font-size: 15px;">{{number_format($total,2)}}<strong></td>
+	    			<td colspan="14" class="text-right" style="border-top: 2px solid #272626;"></td>
+	    			<td class="text-right" style="border-top: 2px solid #272626;"><strong style="font-size: 15px;">{{number_format($total,2)}}<strong></td>
+	    		</tr>
+	    		<tr style="background-color: #f3f3f3;">
+	    			<td colspan="14" class="text-right"></td>
+	    			<td class="text-right" style="border-top: 2px double #444242;"><strong style="font-size: 15px;">{{number_format($remainingTotal,2)}}<strong></td>
 	    		</tr>
 	    </tbody>
 	 </table>
