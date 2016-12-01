@@ -19,7 +19,13 @@ use Input;
 class ProjectOrderController extends Controller {
     public function index() {
     	$po = ProjectOrder::all();
-
+        
+        foreach ($po as $k=>$v) {
+            $startDateFormatted = new Carbon($v->start_date);
+            $v->start_date = $startDateFormatted->format("m/d/Y");
+            $endDateFormatted = new Carbon($v->end_date);
+            $v->end_date = $endDateFormatted->format("m/d/Y");
+        }
     	$data = array(
     	    'po' => $po
     	);
@@ -92,7 +98,7 @@ class ProjectOrderController extends Controller {
         $endDateFormatted = new Carbon($projectOrder->end_date);
         $projectOrder->end_date = $endDateFormatted->format("m/d/Y");
 
-        $projectDaily = ProjectOrderDaily::where('po_id', $id)->get();
+        $projectDaily = ProjectOrderDaily::where('po_id', $id)->get()->sortBy('date');
         $equipments = Equipment::all();
         $projectEquipment = ProjectOrderEquipment::where('po_id', $id)->get();
         $projectTotalExpenses = 0;
@@ -216,6 +222,22 @@ class ProjectOrderController extends Controller {
     	}
     }
 
+    public function assignMultipleManpowerToProjectDaily($po_daily_id, $ids) {
+        $manpower_ids = explode(",", $ids);
+
+        foreach ($manpower_ids as $manpower_id) {
+            $manpower = Manpower::find($manpower_id);
+            $po_daily_manpower = new ProjectOrderDailyManpower;
+            $po_daily_manpower->po_daily_id = $po_daily_id;
+            $po_daily_manpower->manpower_id = $manpower_id;
+            $po_daily_manpower->rate = $manpower->rate;
+
+            $po_daily_manpower->save();
+        }
+
+        return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Manpower has been successfully added');
+    }
+
     public function postManpowerDailyLog(Request $request){
     	$in = $request->input('in');
     	$out = $request->input('out');
@@ -268,7 +290,7 @@ class ProjectOrderController extends Controller {
 
     public function printSummary($po_id){
         $projectOrder = ProjectOrder::find($po_id);
-        $projectDailies = ProjectOrderDaily::where('po_id', $po_id)->get();
+        $projectDailies = ProjectOrderDaily::where('po_id', $po_id)->get()->sortBy('date');
         $total = 0;
 
         foreach ($projectDailies as $k=>$v) {

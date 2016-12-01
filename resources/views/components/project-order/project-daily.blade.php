@@ -288,20 +288,23 @@
                     <h4 class="modal-title" id="myModalLabel">Manpower Lists from Project</h4>
                 </div>
                 <div class="modal-body">
-                    <table width="100%" class="table table-striped table-bordered table-hover table-dataTable" id="manpower-table">
+                    <table width="100%" class="table table-striped table-bordered table-hover" id="manpower-table">
                         <thead>
                             <tr>
+                                <th class="no-sort"></th>
                                 <th>ID</th>
                                 <th>Name</th>
                                 <th>Position</th>
                                 <th class="no-sort">Address</th>
                                 <th>Rate</th>
                                 <th class="no-sort text-right" width="30">Action</th>
+                                <th class="hide"></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($manpower as $k=>$v)
-                                <tr class="odd">
+                                <tr class="odd" data-id="{{$v->id}}">   
+                                    <td></td>
                                     <td>{{$v->employee_id}}</td>
                                     <td>{{$v->first_name}} {{$v->last_name}}</td>
                                     <td>{{$v->position}}</td>
@@ -313,6 +316,7 @@
                                             <i class="fa fa-check-circle"></i>
                                         </a>
                                     </td>
+                                    <td class="hide">{{$v->id}}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -444,6 +448,47 @@
             }else{
                 $("#holiday").attr("checked", false);
             }
+
+            var manpowerTable = $('#manpower-table').DataTable({
+                "responsive": true,
+                "select": {
+                    "style":    'multi',
+                    "selector": 'td:first-child'
+                },
+                "columnDefs": [ {
+                      "targets": 'no-sort',
+                      "orderable": false,
+                },{
+                    "orderable": false,
+                    "className": 'select-checkbox',
+                    "targets":   0
+                }  ],
+
+                "dom" : "<'row'<'col-sm-6'l><'col-sm-6'f>>" +
+                        "<'row'<'col-sm-12'B>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+                "buttons": [
+                        {
+                            "extend": 'selected',
+                            "text": 'Add All',
+                            "className": 'btn btn-primary',
+                            "action": function ( e, dt, button, config ) {
+                                var selectedRows = dt.rows( { selected: true } ).data(),
+                                    selectedIds = [];
+
+                                $.each(selectedRows, function (item) {
+                                    selectedIds.push(selectedRows[item][7]);
+                                });
+                                console.log(selectedIds);
+                                window.location.href = "{{ action('ProjectOrderController@assignMultipleManpowerToProjectDaily', $projectDaily->id) }}/" + selectedIds.join(","); 
+                            }
+                        }
+                    ]
+                
+            });
+
+
 
         });
     </script>
