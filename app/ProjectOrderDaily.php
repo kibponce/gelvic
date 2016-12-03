@@ -4,12 +4,20 @@ namespace App;
 use Carbon\Carbon;
 use App\ProjectOrderDailyManpower;
 use App\ProjectOrder;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class ProjectOrderDaily extends Model
 {
+	use SoftDeletes;
     protected $table = 'po_dailies';
+
+    /**
+    * The attributes that should be mutated to dates.
+    *
+    * @var array
+    */
+   protected $dates = ['deleted_at'];
 
     public function getTotalCost($day){
     	$projectOrderDailyManpower = projectOrderDailyManpower::where('po_daily_id', $this->id)->get();

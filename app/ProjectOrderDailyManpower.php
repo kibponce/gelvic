@@ -28,7 +28,6 @@ class ProjectOrderDailyManpower extends Model
     		$time_in = new Carbon($this->in);
     		$time_in = $time_in->format('Y-m-D h:i:s');
     		$startTime = Carbon::parse($this->in);
-    		
     	}
 
     	if($this->out) {
@@ -37,6 +36,13 @@ class ProjectOrderDailyManpower extends Model
     		$finishTime = Carbon::parse($this->out);
     		//return total hours where 12PM is not included
     		$regTotalHour = $finishTime->diffInHours($startTime);
+
+            //Make 12pm not counted on total hours
+            if(!$this->is_paid_break){
+                $regTotalHour = $finishTime->diffInHoursFiltered(function(Carbon $date) {
+                   return $date->hour != 12;
+                }, $startTime);
+            }
 
             if($regTotalHour <= 8){
                 $paxCount = $regTotalHour / 8;
@@ -48,7 +54,6 @@ class ProjectOrderDailyManpower extends Model
     		if($regTotalHour > self::MAX_REG_HOUR) {
     			$regTotalOTHour = $regTotalHour - self::MAX_REG_HOUR;
     			$regTotalHour = self::MAX_REG_HOUR;
-    			
     		}
 
     		//return total hours for NP(above 10pm)

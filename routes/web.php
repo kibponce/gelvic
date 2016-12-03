@@ -26,6 +26,7 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::get('/assign-multiple-daily-manpower/{po_daily_id?}/{ids?}', 'ProjectOrderController@assignMultipleManpowerToProjectDaily');
     Route::post('/daily-log/', 'ProjectOrderController@postManpowerDailyLog');
     Route::post('/update-daily-activty/', 'ProjectOrderController@updateActivity');
+    Route::post('/delete-daily-activty/', 'ProjectOrderController@deleteActivity');
     Route::get('/delete-daily-manpower/{id?}/{po_daily_id?}', 'ProjectOrderController@deleteDailyManpower');
     Route::get('/print/daily/{po_daily_id?}', 'ProjectOrderController@printDaily');
     Route::get('/print/summary/{po_id?}', 'ProjectOrderController@printSummary');

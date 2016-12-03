@@ -34,6 +34,10 @@
                         <a href="#" class="btn btn-success btn-xs edit-daily" data-toggle="modal" data-target="#activityModal" data-id="{{$projectDaily->id}}">
                             <i class="fa fa-pencil"></i>
                         </a>
+
+                        <a href="#" class="btn btn-danger btn-xs delete-daily" data-toggle="modal" data-target="#deleteDailyModal" data-id="{{$projectDaily->id}}">
+                            <i class="fa fa-times"></i>
+                        </a>
                     </div>
                 </div>
                 <div class="panel-body">
@@ -337,7 +341,16 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title" id="myModalLabel">Daily Log</h4>
                 </div>
-                <div class="modal-body">                     
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="1" name="paid_break" id="paid_break" checked>Paid Break
+                                </label>
+                            </div>
+                        </div>
+                    </div>                     
                     <div class="row">
                         <div class="col-lg-12">
                             <input type='hidden' class="form-control" name="id" id="id" value=""/>
@@ -413,6 +426,36 @@
             <!-- /.modal-content -->
         </div>
     </div>
+
+    <!-- Delete Activity Modal -->
+    <div class="modal fade" id="deleteDailyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                {!! Form::open(array('action' => 'ProjectOrderController@deleteActivity')) !!}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Delete Project Daily</h4>
+                </div>
+                <div class="modal-body">
+                    
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type='hidden' class="form-control" name="delete_daily_id" id="delete_daily_id" value=""/>
+                                <p>Are you sure you want to delete this project daily?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+                {!! Form::close() !!}
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -441,6 +484,10 @@
 
             $('.edit-daily').click(function (el){
                 $("#daily_id").val($(this).attr("data-id"));
+            });
+
+            $('.delete-daily').click(function (el){
+                $("#delete_daily_id").val($(this).attr("data-id"));
             });
 
             if(isHoliday == 1) {
@@ -480,16 +527,12 @@
                                 $.each(selectedRows, function (item) {
                                     selectedIds.push(selectedRows[item][7]);
                                 });
-                                console.log(selectedIds);
+
                                 window.location.href = "{{ action('ProjectOrderController@assignMultipleManpowerToProjectDaily', $projectDaily->id) }}/" + selectedIds.join(","); 
                             }
                         }
-                    ]
-                
+                    ] 
             });
-
-
-
         });
     </script>
 @stop

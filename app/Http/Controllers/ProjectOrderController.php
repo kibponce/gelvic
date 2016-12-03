@@ -240,7 +240,8 @@ class ProjectOrderController extends Controller {
 
     public function postManpowerDailyLog(Request $request){
     	$in = $request->input('in');
-    	$out = $request->input('out');
+        $out = $request->input('out');
+    	$paidBreak = $request->input('paid_break');
     	$id = $request->input('id');
 
     	$manpower_daily = ProjectOrderDailyManpower::find($id);
@@ -253,7 +254,8 @@ class ProjectOrderController extends Controller {
     	$time_out = Carbon::instance($dateTime_out);
         
     	$manpower_daily->in = $time_in->toDateTimeString();
-    	$manpower_daily->out = $time_out->toDateTimeString();
+        $manpower_daily->out = $time_out->toDateTimeString();
+    	$manpower_daily->is_paid_break = intval($paidBreak);
     	if($manpower_daily->save()){
     		return redirect()->action('ProjectOrderController@showProjectDaily', $manpower_daily->po_daily_id)->with('success', 'Manpower Time Log is updated');
     	}
@@ -268,6 +270,15 @@ class ProjectOrderController extends Controller {
         $daily->activity = $activity;
         if($daily->save()){
             return redirect()->action('ProjectOrderController@showProjectDaily', $daily->id)->with('success', 'Daily Activty is succesfully updated');
+        }
+    }
+
+    public function deleteActivity(Request $request) {
+        $daily_id = $request->input("delete_daily_id");
+        $daily = ProjectOrderDaily::find($daily_id);
+        $po_id = $daily->po_id;
+        if($daily->delete()){
+            return redirect()->action('ProjectOrderController@show', $po_id)->with('success', 'Project Daily has been successfully deleted');
         }
     }
 

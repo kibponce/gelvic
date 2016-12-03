@@ -124,7 +124,7 @@
                                 @endif
                             </a>
                         @endforeach
-                        <a href="javascript://" class="list-group-item">
+                        <a href="javascript://" class="list-group-item" style="background-color: #95ec90;">
                             <div>
                                 <strong>TOTAL</strong>  
                                 <span class="pull-right text-muted small badge badge-red"><em>{{number_format($projectManpowerTotalExpense,2)}}</em>
