@@ -29,7 +29,8 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::post('/delete-daily-activty/', 'ProjectOrderController@deleteActivity');
     Route::get('/delete-daily-manpower/{id?}/{po_daily_id?}', 'ProjectOrderController@deleteDailyManpower');
     Route::get('/print/daily/{po_daily_id?}', 'ProjectOrderController@printDaily');
-    Route::get('/print/summary/{po_id?}', 'ProjectOrderController@printSummary');
+    Route::get('/print/summary/{po_id?}/{isBilling?}', 'ProjectOrderController@printSummary');
+    Route::post('/billings/set', 'ProjectOrderController@setBillings');
 });
 
 Route::group(['prefix' => 'materials'], function () {

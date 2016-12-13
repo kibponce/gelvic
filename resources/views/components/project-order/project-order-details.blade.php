@@ -9,9 +9,15 @@
                 </a>
             </div>
             <div class="col-lg-8 col-md-8">
-                <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printSummary', $projectOrder->id) }}">
-                    <i class="fa fa-print"></i> Print Summary
-                </a>
+                <div class="btn-group pull-right" role="group" aria-label="...">
+                      <a type="button" class="btn btn-info btn-sm" target="_blank" href="{{ action('ProjectOrderController@printSummary', ['po_id' => $projectOrder->id, 'isBilling' => false]) }}">
+                          <i class="fa fa-print"></i> Costing
+                      </a>
+                      <a type="button" class="btn btn-info btn-sm" target="_blank" href="{{ action('ProjectOrderController@printSummary', ['po_id' => $projectOrder->id, 'isBilling' => true]) }}">
+                          <i class="fa fa-print"></i> Billing
+                      </a>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -56,6 +62,13 @@
                         </div>
                     </div>
                 </div>
+                <a href="#" data-toggle="modal" data-target="#billingsModal">
+                    <div class="panel-footer">
+                        <span class="pull-left">Set Billings</span>
+                        <span class="pull-right"><i class="fa fa-search"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
             </div>
         </div>
         <div class="col-lg-4 col-md-6">
@@ -118,6 +131,9 @@
                                 </div>
                                 @if($v->isHoliday)
                                     <span class="label label-info">Holiday</span>
+                                @endif
+                                @if($v->isRegular)
+                                    <span class="label label-primary">Regular</span>
                                 @endif
                                 @if($v->isSunday)
                                     <span class="label label-warning">Sunday</span>
@@ -210,6 +226,7 @@
                                 <tr>
                                     <th class="text-left">Name</th>
                                     <th class="text-right">Rate</th>
+                                    <th class="text-center">Description</th>
                                     <th class="text-center">Duration</th>
                                     <th class="text-right">Expense</th>
                                     <th class="text-right">Profit</th>
@@ -221,6 +238,7 @@
                                     <tr>
                                         <td class="text-left">{{$v->equipment->name}}</td>
                                         <td class="text-right">{{number_format($v->rate,2)}}</td>
+                                        <td class="text-center">{{$v->description}}</td>
                                         <td class="text-center">{{$v->duration}}</td>
                                         <td class="text-right">{{number_format($v->expense,2)}}</td>
                                         <td class="text-right">{{number_format($v->profit,2)}}</td>
@@ -233,11 +251,11 @@
                                 @endforeach
                                 @if(count($projectEquipment) == 0)
                                     <tr>
-                                        <td colspan="6" class="text-center">No Items Added</td>
+                                        <td colspan="7" class="text-center">No Items Added</td>
                                     </tr>
                                 @else
                                     <tr style="background-color: #95ec90;">
-                                        <td colspan="3" class="text-right"><strong>Total</strong></td>
+                                        <td colspan="4" class="text-right"><strong>Total</strong></td>
                                         <td class="text-right"><strong>{{number_format($projectEquipmentTotalExpense,2)}}</strong></td>
                                         <td  class="text-right"><strong>{{number_format($projectEquipmentTotaProfit,2)}}</strong></td>
                                         <td>
@@ -381,7 +399,7 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group @if ($errors->has('equipment')) has-error  @endif">
-                                <label>Description</label>
+                                <label>Equipment</label>
                                 <input class="form-control" 
                                         placeholder="Enter Description" 
                                         name="po_id"
@@ -417,6 +435,74 @@
                                 @if ($errors->has('expense'))
                                     <p class="help-block">{{ $errors->first('expense') }} </p>
                                 @endif
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('expense')) has-error  @endif">
+                                <label>Description</label>
+                                <textarea class="form-control" name="description" placeholder="Enter Description" value=""></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+            {!! Form::close() !!}
+            <!-- /.modal-content -->
+        </div>
+    </div>
+    <!-- /.modal-dialog -->
+
+    <!-- Materials Modal -->
+    <div class="modal fade" id="billingsModal" tabindex="-2" role="dialog" aria-labelledby="billingsModal" aria-hidden="true">
+        <div class="modal-dialog">
+            {!! Form::open(array('action' => 'ProjectOrderController@setBillings')) !!}
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Billings</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Type A</label>
+                                <input class="form-control" 
+                                        placeholder="Enter Description" 
+                                        name="po_id"
+                                        type="hidden"
+                                        value="{{$projectOrder->id}}">
+                                <div class="form-group input-group">
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_a" value="{{$projectOrder->type_a * 8}}">
+                                    <span class="input-group-addon">Rate</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Type B</label>
+                                <div class="form-group input-group">
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_b" value="{{$projectOrder->type_b * 8}}">
+                                    <span class="input-group-addon">Rate</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Type C</label>
+                                <div class="form-group input-group">
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_c" value="{{$projectOrder->type_c * 8}}">
+                                    <span class="input-group-addon">Rate</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label>Materials & Consumables</label>
+                                <input type="text" class="form-control" placeholder="Enter Cost" name="materials" value="{{$projectOrder->materials}}">
                             </div>
                         </div>
                     </div>
