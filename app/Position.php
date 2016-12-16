@@ -19,6 +19,9 @@ class Position extends Model {
             "OPERATOR" => "TYPE_B",
             "ELECTRICIAN_B" => "TYPE_B",
             "DRIVER_B" => "TYPE_B",
+            "TIME_KEEPER" => "TYPE_B",
+            "TOOL_KEEPER" => "TYPE_B",
+            "EXPEDITER" => "TYPE_B",
 
             // TYPE C
             "WIELDER_C" => "TYPE_C",
