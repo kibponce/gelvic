@@ -326,13 +326,12 @@ class ProjectOrderController extends Controller {
         foreach ($projectOrderMaterials as $k=>$v) {
             $v->total_amount = ($v->quantity * $v->unit_cost) * $v->duration;
             $totalMaterialsExpense = $totalMaterialsExpense + $v->total_amount;
-            $total = $total + $v->total_amount;
         }
 
         if($isBilling) {
-            $totalMaterialsExpense = $projectOrder->materials;
-            $total = $total + $totalMaterialsExpense;
+            $totalMaterialsExpense = $projectOrder->materials; 
         }
+        $total = $total + $totalMaterialsExpense;
 
         $type_a_rates = $this->getBillingsRate($projectOrder->type_a);
         $type_b_rates = $this->getBillingsRate($projectOrder->type_b);
