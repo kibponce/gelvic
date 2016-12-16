@@ -83,7 +83,7 @@ class ProjectOrderDailyManpower extends Model
     	return $return;
     }
 
-    public static function getTotal($data, $day = null) {
+    public static function getTotal($data, $day = null, $isBilling = false) {
         $total = (object)[];
         //Pax Count
         $total_pax = 0;

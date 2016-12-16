@@ -8,6 +8,7 @@ use App\Equipment;
 use App\ProjectOrderMaterials;
 use App\ProjectOrderDailyManpower;
 use App\ProjectOrderEquipment;
+use App\Rate;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -73,13 +74,13 @@ class ProjectOrderController extends Controller {
     	    $po->end_date = $end_date;
     	    $po->area = $area;
             $po->description = $description;
-    	    $po->deliver_to = $deliver_to;
+            $po->deliver_to = $deliver_to;
 
     	    if($po->save()){
     	        if($id != "") {
-    	            return redirect()->action('ProjectOrderController@add', $id)->with('success', 'Manpower has been successfully saved');
+    	            return redirect()->action('ProjectOrderController@add', $id)->with('success', 'Project has been successfully saved');
     	        } else {
-    	            return redirect()->action('ProjectOrderController@add')->with('success', 'Manpower has been successfully saved');
+    	            return redirect()->action('ProjectOrderController@add')->with('success', 'Project has been successfully saved');
     	        }                  
     	    }
     	}else{
@@ -123,7 +124,7 @@ class ProjectOrderController extends Controller {
 
             //Determine day status
             $dayStatus = "NORMAL";
-            if($v->isSunday && !$v->isHoliday) {
+            if($v->isSunday && !$v->isHoliday && !$v->isRegular) {
                 $dayStatus = "SUNDAY";
             }else if(!$v->isSunday && $v->isHoliday){
                 $dayStatus = "HOLIDAY";
@@ -265,8 +266,10 @@ class ProjectOrderController extends Controller {
         $activity = $request->input("activity");
         $daily_id = $request->input("daily_id");
         $holiday = $request->input("holiday");
+        $regular = $request->input("regular");
         $daily = ProjectOrderDaily::find($daily_id);
         $daily->isHoliday = intval($holiday);
+        $daily->isRegular = intval($regular);
         $daily->activity = $activity;
         if($daily->save()){
             return redirect()->action('ProjectOrderController@showProjectDaily', $daily->id)->with('success', 'Daily Activty is succesfully updated');
@@ -299,15 +302,21 @@ class ProjectOrderController extends Controller {
         return $pdf->stream();
     }
 
-    public function printSummary($po_id){
+    public function printSummary($po_id, $isBilling = false){
         $projectOrder = ProjectOrder::find($po_id);
         $projectDailies = ProjectOrderDaily::where('po_id', $po_id)->get()->sortBy('date');
         $total = 0;
+        
+
+        //Project Billing Rates
+        $type_a_rate = $projectOrder->type_a;
+        $type_b_rate = $projectOrder->type_b;
+        $type_c_rate = $projectOrder->type_c;
 
         foreach ($projectDailies as $k=>$v) {
             $dateFormatted = new Carbon($v->date);
             $v->date = $dateFormatted->format("m/d/Y");
-            $v->dailyData = ProjectOrderDaily::processProjectDialy($v->id);
+            $v->dailyData = ProjectOrderDaily::processProjectDialy($v->id, $isBilling);
             $total = $total + $v->dailyData['total']->total;
         }
 
@@ -320,12 +329,25 @@ class ProjectOrderController extends Controller {
             $total = $total + $v->total_amount;
         }
 
+        if($isBilling) {
+            $totalMaterialsExpense = $projectOrder->materials;
+            $total = $total + $totalMaterialsExpense;
+        }
+
+        $type_a_rates = $this->getBillingsRate($projectOrder->type_a);
+        $type_b_rates = $this->getBillingsRate($projectOrder->type_b);
+        $type_c_rates = $this->getBillingsRate($projectOrder->type_c);
+
         $data = array(
             "projectOrder" => $projectOrder,
             "projectDailies" => $projectDailies,
             "total" => $total,
             "remainingTotal" => $projectOrder->amount - $total,
-            "totalMaterialsExpense" => $totalMaterialsExpense
+            "totalMaterialsExpense" => $totalMaterialsExpense,
+            "isBilling" => $isBilling,
+            "type_a_rates" => $type_a_rates,
+            "type_b_rates" => $type_b_rates,
+            "type_c_rates" => $type_c_rates
         );
 
         $pdf = PDF::loadView('components.project-order.print.summary', $data);
@@ -333,6 +355,43 @@ class ProjectOrderController extends Controller {
         
         // Output the generated PDF to Browser
         return $pdf->stream();
+    }
+
+    public function getBillingsRate($type_rate){
+        $billing_rates = (object)[];
+
+        //For Project Billing - OverRide Rate depending of project billing rates
+        $billing_rates->reg = Rate::reg($type_rate) * 8;
+        $billing_rates->regOT = Rate::regOT($type_rate);
+        $billing_rates->regNP = Rate::regNP($type_rate);
+        $billing_rates->sundayNormal = Rate::sundayNormal($type_rate);
+        $billing_rates->sundayOT = Rate::sundayOT($type_rate);
+        $billing_rates->sundayNP = Rate::sundayNP($type_rate);
+        $billing_rates->holidayNormal = Rate::holidayNormal($type_rate);
+        $billing_rates->holidayOT = Rate::holidayOT($type_rate);
+        $billing_rates->holidayNP = Rate::holidayNP($type_rate);
+        $billing_rates->sundayHolidayNormal = Rate::sundayHolidayNormal($type_rate);
+        $billing_rates->sundayHolidayOT = Rate::sundayHolidayOT($type_rate);
+        $billing_rates->sundayHolidayNP = Rate::sundayHolidayNP($type_rate);
+
+        return $billing_rates;
+    }
+
+    public function setBillings(Request $request) {
+        $type_a = $request->input("type_a");
+        $type_b = $request->input("type_b");
+        $type_c = $request->input("type_c");
+        $materials = $request->input("materials");
+        $po_id = $request->input("po_id");
+
+        $projectOrder = ProjectOrder::find($po_id);
+        $projectOrder->type_a = $type_a / 8;
+        $projectOrder->type_b = $type_b / 8;
+        $projectOrder->type_c = $type_c / 8;
+        $projectOrder->materials = $materials;
+
+        $projectOrder->save();
+        return redirect()->action('ProjectOrderController@show', $po_id)->with('success', 'Project Billing is set Up.');
     }
 }
 

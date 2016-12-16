@@ -74,6 +74,7 @@ class EquipmentController extends Controller {
             $equipment = $request->input('equipment');
             $equipmentData = Equipment::find($equipment);
             $duration = $request->input('duration');
+            $description = $request->input('description');
             $rate = $equipmentData->rate;
             $expense = $request->input('expense') != "" ? $request->input('expense') : 0;
 
@@ -83,6 +84,7 @@ class EquipmentController extends Controller {
             $projectEquipment->duration = $duration;
             $projectEquipment->rate = $rate;
             $projectEquipment->expense = $expense;
+            $projectEquipment->description = $description;
             if($projectEquipment->save()){
                 return redirect()->action('ProjectOrderController@show', $po_id)->with('success', 'Equipment has been successfully added');
             }

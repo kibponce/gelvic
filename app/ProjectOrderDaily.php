@@ -27,7 +27,7 @@ class ProjectOrderDaily extends Model
     	return $total->total;
     }
 
-    public static function processProjectDialy($po_daily_id){
+    public static function processProjectDialy($po_daily_id, $isBilling = false){
 		$projectDaily = ProjectOrderDaily::find($po_daily_id);
 	    $dateFormatted = new Carbon($projectDaily->date);
 	    $projectDaily->date = $dateFormatted->format("m/d/Y");
@@ -50,7 +50,7 @@ class ProjectOrderDaily extends Model
 	    $typeC = array();
 
 	    $dayStatus = "NORMAL";
-	    if($projectDaily->isSunday && !$projectDaily->isHoliday) {
+	    if($projectDaily->isSunday && !$projectDaily->isHoliday && !$projectDaily->isRegular) {
 	        $dayStatus = "SUNDAY";
 	    }else if(!$projectDaily->isSunday && $projectDaily->isHoliday){
 	        $dayStatus = "HOLIDAY";
@@ -69,7 +69,7 @@ class ProjectOrderDaily extends Model
 				$time_in = new Carbon($v->in);
 				$time_in = $time_in->format('h:i A');				
 			}
-			
+
 			if($v->out) {
 				$time_out = new Carbon($v->out);
 				$time_out = $time_out->format('h:i A');
@@ -80,12 +80,21 @@ class ProjectOrderDaily extends Model
 
 	        switch($type) {
 	            case "TYPE_A":
+	            	if($isBilling){
+	            		$v->rate = $projectOrder->type_a;
+	            	}
 	                array_push($typeA, $v);
 	                break;
 	            case "TYPE_B":
+	            	if($isBilling){
+	            		$v->rate = $projectOrder->type_b;
+	            	}
 	                array_push($typeB, $v);
 	                break;
 	            case "TYPE_C":
+	            	if($isBilling){
+	            		$v->rate = $projectOrder->type_c;
+	            	}
 	                array_push($typeC, $v);
 	                break;
 	            default:
@@ -93,10 +102,10 @@ class ProjectOrderDaily extends Model
 		}
 
 
-	    $totalA = ProjectOrderDailyManpower::getTotal($typeA, $dayStatus);
-	    $totalB = ProjectOrderDailyManpower::getTotal($typeB, $dayStatus);
-	    $totalC = ProjectOrderDailyManpower::getTotal($typeC, $dayStatus);
-	    $total  = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $dayStatus);
+	    $totalA = ProjectOrderDailyManpower::getTotal($typeA, $dayStatus, $isBilling);
+	    $totalB = ProjectOrderDailyManpower::getTotal($typeB, $dayStatus, $isBilling);
+	    $totalC = ProjectOrderDailyManpower::getTotal($typeC, $dayStatus, $isBilling);
+	    $total  = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $dayStatus, $isBilling);
 
 		$data = array(
 	        "dayStatus" => $dayStatus,

@@ -50,6 +50,9 @@
                             @if($projectDaily->isHoliday)
                                 <span class="label label-info">Holiday</span>
                             @endif
+                            @if($projectDaily->isRegular)
+                                <span class="label label-primary">Regular</span>
+                            @endif
                             @if($projectDaily->isSunday)
                                 <span class="label label-warning">Sunday</span>
                             @endif
@@ -408,6 +411,11 @@
                                         <input type="checkbox" value="1" name="holiday" id="holiday">Holiday
                                     </label>
                                 </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="1" name="regular" id="regular">Regular
+                                    </label>
+                                </div>
                             </div>
                             <div class="col-md-12">
                                 <label>Activity</label>
@@ -462,6 +470,7 @@
     <script type="text/javascript">
         $(function () {
             var isHoliday = "{{$projectDaily->isHoliday}}";
+            var isRegular = "{{$projectDaily->isRegular}}";
             $('#time_in').datetimepicker({
                 format : "YYYY-MM-DD hh:mm A",
                 inline: true,
@@ -494,6 +503,12 @@
                 $("#holiday").attr("checked", true);
             }else{
                 $("#holiday").attr("checked", false);
+            }
+
+            if(isRegular == 1) {
+                $("#regular").attr("checked", true);
+            }else{
+                $("#regular").attr("checked", false);
             }
 
             var manpowerTable = $('#manpower-table').DataTable({
