@@ -16,7 +16,7 @@
     	       url('../fonts/Roboto-300/Roboto-300.svg#Roboto') format('svg');
     	}
     	body {
-    		font-size : 12px;
+    		font-size : 13px;
     		font-family: 'Roboto';
     	}
     	table {
