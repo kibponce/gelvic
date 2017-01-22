@@ -15,9 +15,11 @@
     	       url('../fonts/Roboto-300/Roboto-300.ttf') format('truetype'),
     	       url('../fonts/Roboto-300/Roboto-300.svg#Roboto') format('svg');
     	}
+        @page { margin: 10px; }
     	body {
     		font-size : 12px;
     		font-family: 'Roboto';
+            margin: 40px 20px 40px 20px;
     	}
     	table {
     	    background-color: transparent;
