@@ -11,6 +11,8 @@ class ProjectOrderDailyManpower extends Model
     protected $table = 'po_dailies_manpower';
     const MAX_REG_HOUR = 8; 
 
+    //Process the rate and hours of manpower's daily
+    //return object
     public function getRateAndHours() {
         $paxCount = 0;
 
@@ -83,7 +85,8 @@ class ProjectOrderDailyManpower extends Model
     	return $return;
     }
 
-    public static function getTotal($data, $day = null, $isBilling = false) {
+    //process the total project daily of a person
+    public static function getTotal($data, $isBilling = false) {
         $total = (object)[];
         //Pax Count
         $total_pax = 0;
@@ -102,7 +105,18 @@ class ProjectOrderDailyManpower extends Model
         $totalExpenses = 0;
 
         foreach ($data as $k=>$v) {
-        	$v->day = $day;
+            $dateFormatted = new Carbon($v->date);
+            $v->isSunday = $dateFormatted->dayOfWeek == Carbon::SUNDAY;
+            $dayStatus = "NORMAL";
+            if($v->isSunday && !$v->isHoliday && !$v->isRegular) {
+                $dayStatus = "SUNDAY";
+            }else if(!$v->isSunday && $v->isHoliday){
+                $dayStatus = "HOLIDAY";
+            }else if($v->isSunday && $v->isHoliday){
+                $dayStatus = "SUNDAYHOLIDAY";
+            }
+
+        	$v->day = $dayStatus;
             $v->rateAndHours = $v->getRateAndHours(); 
 
             //Pax Count
@@ -133,6 +147,12 @@ class ProjectOrderDailyManpower extends Model
         $total->total = $totalExpenses;
 
         return $total;
+    }
+
+
+    public function po_daily()
+    {
+       return $this->hasMany('App\ProjectOrderDaily', 'id', 'po_daily_id');
     }
 
 }

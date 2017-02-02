@@ -52,4 +52,6 @@ Route::group(['prefix' => 'equipment'], function () {
     Route::get('/delete/{id?}/{po_id?}', 'EquipmentController@projectDelete');
 });
 
+Route::get('/payroll/{start?}/{end?}', 'PayrollController@index');
+
    

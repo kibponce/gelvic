@@ -22,6 +22,9 @@
                 <li>
                     <a href="{{ action('EquipmentController@index') }}"><i class="fa fa-wrench fa-fw"></i> Equipment</a>
                 </li>
+                <li>
+                    <a href="{{ action('PayrollController@index') }}"><i class="fa fa-money fa-fw"></i> Payroll</a>
+                </li>
             </ul>
         </div>
         <!-- /.sidebar-collapse -->

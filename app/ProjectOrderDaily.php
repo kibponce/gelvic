@@ -38,7 +38,13 @@ class ProjectOrderDaily extends Model
 		    $query->where('po_daily_id', '=', $po_daily_id);
 		})->get();
 
-		$projectOrderDailyManpower = ProjectOrderDailyManpower::where('po_daily_id', $po_daily_id)->get();
+		$projectOrderDailyManpower = ProjectOrderDailyManpower::where('po_daily_id', $po_daily_id)
+														->join('po_dailies', function ($q) {
+															$q->select('po_dailies.id as po_daily_id', 'po_dailies.*');
+															$q->on('po_dailies.id','=', 'po_dailies_manpower.po_daily_id');
+														})
+														->select('po_dailies_manpower.id as id', 'po_dailies_manpower.*', 'po_dailies.id as daily_id', 'po_dailies.date', 'po_dailies.status', 'po_dailies.activity', 'po_dailies.isHoliday', 'po_dailies.isRegular')
+														->get();
 
 	    $total = (object)[];
 	    $totalA = (object)[];
@@ -49,6 +55,7 @@ class ProjectOrderDaily extends Model
 	    $typeB = array();
 	    $typeC = array();
 
+	    //Get what type of day
 	    $dayStatus = "NORMAL";
 	    if($projectDaily->isSunday && !$projectDaily->isHoliday && !$projectDaily->isRegular) {
 	        $dayStatus = "SUNDAY";
@@ -101,11 +108,11 @@ class ProjectOrderDaily extends Model
 	        }
 		}
 
-
-	    $totalA = ProjectOrderDailyManpower::getTotal($typeA, $dayStatus, $isBilling);
-	    $totalB = ProjectOrderDailyManpower::getTotal($typeB, $dayStatus, $isBilling);
-	    $totalC = ProjectOrderDailyManpower::getTotal($typeC, $dayStatus, $isBilling);
-	    $total  = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $dayStatus, $isBilling);
+		//process the total project daily of a person
+	    $totalA = ProjectOrderDailyManpower::getTotal($typeA, $isBilling);
+	    $totalB = ProjectOrderDailyManpower::getTotal($typeB, $isBilling);
+	    $totalC = ProjectOrderDailyManpower::getTotal($typeC, $isBilling);
+	    $total  = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $isBilling);
 
 		$data = array(
 	        "dayStatus" => $dayStatus,

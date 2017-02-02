@@ -19,5 +19,7 @@
 
 <script type="text/javascript" src="{{URL::to('/')}}/bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 
+<script type="text/javascript" src="{{URL::to('/')}}/bower_components/bootstrap-daterangepicker-master/daterangepicker.js"></script>
+
 <!-- Custom Theme JavaScript -->
 <script src="{{URL::to('/')}}/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js"></script>
