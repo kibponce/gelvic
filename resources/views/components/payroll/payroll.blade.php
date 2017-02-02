@@ -80,6 +80,7 @@
 	    	alwaysShowCalendars: true,
 	        startDate: start,
 	        endDate: end,
+	        opens: "right",
 	        ranges: {
 	           'This Month': [moment().startOf('month'), moment().endOf('month')],
 	           '1st Payroll of the Month': [moment().startOf('month'), moment().startOf('month').add(14, 'days')],
