@@ -388,17 +388,17 @@ class ProjectOrderController extends Controller {
 
         $projectOrder = ProjectOrder::find($po_id);
         if($type_a) {
-            $projectOrder->type_a = $type_a / 8;
+            $projectOrder->type_a = $type_a * 8;
         }else{
             $projectOrder->type_a = 0;
         }
         if($type_b) {
-            $projectOrder->type_b = $type_b / 8;
+            $projectOrder->type_b = $type_b * 8;
         }else{
             $projectOrder->type_b = 0;
         }
         if($type_c) {
-            $projectOrder->type_c = $type_c / 8;
+            $projectOrder->type_c = $type_c * 8;
         }else{
             $projectOrder->type_c = 0;
         }
