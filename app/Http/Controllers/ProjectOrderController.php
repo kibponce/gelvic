@@ -66,6 +66,10 @@ class ProjectOrderController extends Controller {
     	    }else{
     	        $po = new ProjectOrder;
     	    }
+
+            if($amount == "") {
+                $amount = 0;
+            }
     	    
     	    $po->po_number = $po_number;
     	    $po->type = $type;
@@ -292,8 +296,8 @@ class ProjectOrderController extends Controller {
         return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Manpower is succesfully removed');
     }
 
-    public function printDaily($po_daily_id) {
-        $data = ProjectOrderDaily::processProjectDialy($po_daily_id);
+    public function printDaily($po_daily_id, $isBilling = false) {
+        $data = ProjectOrderDaily::processProjectDialy($po_daily_id, $isBilling);
 
         $pdf = PDF::loadView('components.project-order.print.daily', $data);
         $pdf->setPaper('Legal');
@@ -306,7 +310,6 @@ class ProjectOrderController extends Controller {
         $projectOrder = ProjectOrder::find($po_id);
         $projectDailies = ProjectOrderDaily::where('po_id', $po_id)->get()->sortBy('date');
         $total = 0;
-        
 
         //Project Billing Rates
         $type_a_rate = $projectOrder->type_a;
@@ -356,10 +359,10 @@ class ProjectOrderController extends Controller {
         return $pdf->stream();
     }
 
+    //For Project Billing - OverRide Rate depending of project billing rates
     public function getBillingsRate($type_rate){
         $billing_rates = (object)[];
 
-        //For Project Billing - OverRide Rate depending of project billing rates
         $billing_rates->reg = Rate::reg($type_rate) * 8;
         $billing_rates->regOT = Rate::regOT($type_rate);
         $billing_rates->regNP = Rate::regNP($type_rate);
@@ -384,10 +387,27 @@ class ProjectOrderController extends Controller {
         $po_id = $request->input("po_id");
 
         $projectOrder = ProjectOrder::find($po_id);
-        $projectOrder->type_a = $type_a / 8;
-        $projectOrder->type_b = $type_b / 8;
-        $projectOrder->type_c = $type_c / 8;
-        $projectOrder->materials = $materials;
+        if($type_a) {
+            $projectOrder->type_a = $type_a / 8;
+        }else{
+            $projectOrder->type_a = 0;
+        }
+        if($type_b) {
+            $projectOrder->type_b = $type_b / 8;
+        }else{
+            $projectOrder->type_b = 0;
+        }
+        if($type_c) {
+            $projectOrder->type_c = $type_c / 8;
+        }else{
+            $projectOrder->type_c = 0;
+        }
+
+        if($materials) {
+            $projectOrder->materials = $materials;
+        }else{
+            $projectOrder->materials = 0;
+        }
 
         $projectOrder->save();
         return redirect()->action('ProjectOrderController@show', $po_id)->with('success', 'Project Billing is set Up.');

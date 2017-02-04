@@ -89,7 +89,13 @@
 	    <tbody>
 	    	<tr>
 	    		<td width="30" colspan="14">PO. No</td>
-	    		<td class="text-right"><strong style="font-size: 15px;">{{number_format($projectOrder->amount,2)}}</strong></td>
+	    		<td class="text-right">
+	    			<strong style="font-size: 15px;">
+	    				@if($projectOrder->amount > 0)
+	    					{{number_format($projectOrder->amount,2)}}
+	    				@endif
+	    			</strong>
+	    		</td>
 	    	</tr>	
 	    	@foreach ($projectDailies as $k=>$v)
 	    		<!-- TYPE A -->

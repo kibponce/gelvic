@@ -9,8 +9,11 @@
                 </a>
             </div>
             <div class="col-lg-8 col-md-8">
-                <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printDaily', $projectDaily->id) }}">
-                    <i class="fa fa-print"></i> Print
+                <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printDaily', ['daily_id' => $projectDaily->id, 'isBilling' => false ]) }}">
+                    <i class="fa fa-print"></i> Costing
+                </a>
+                <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printDaily', ['daily_id' => $projectDaily->id, 'isBilling' => true ]) }}">
+                    <i class="fa fa-print"></i> Billings
                 </a>
             </div>
         </div>

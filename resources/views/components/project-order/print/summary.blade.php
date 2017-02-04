@@ -249,7 +249,13 @@
 	    	@endif
 	    	<tr>
 	    		<td width="30" colspan="14">PO. No</td>
-	    		<td class="text-right"><strong style="font-size: 15px;">{{number_format($projectOrder->amount,2)}}</strong></td>
+	    		<td class="text-right">
+                    <strong style="font-size: 15px;">
+                        @if($projectOrder->amount > 0)
+                            {{number_format($projectOrder->amount,2)}}
+                        @endif
+                    </strong>
+                </td>
 	    	</tr>	
 	    	@foreach ($projectDailies as $k=>$v)
 	    		<!-- TYPE A -->
@@ -484,14 +490,16 @@
 	    			<td colspan="14"> Materials & Consumables</td>
 	    			<td class="text-right"><strong>{{number_format($totalMaterialsExpense,2)}}</strong></td>
 	    		</tr>
-	    		<tr style="background-color: #f3f3f3;">
-	    			<td colspan="14" class="text-right" style="border-top: 2px solid #272626;"></td>
-	    			<td class="text-right" style="border-top: 2px solid #272626;"><strong style="font-size: 15px;">{{number_format($total,2)}}<strong></td>
-	    		</tr>
-	    		<tr style="background-color: #f3f3f3;">
-	    			<td colspan="14" class="text-right"></td>
-	    			<td class="text-right" style="border-top: 2px double #444242;"><strong style="font-size: 15px;">{{number_format($remainingTotal,2)}}<strong></td>
-	    		</tr>
+                @if($projectOrder->amount > 0)  
+    	    		<tr style="background-color: #f3f3f3;">
+    	    			<td colspan="14" class="text-right" style="border-top: 2px solid #272626;"></td>
+    	    			<td class="text-right" style="border-top: 2px solid #272626;"><strong style="font-size: 15px;">{{number_format($total,2)}}<strong></td>
+    	    		</tr>
+    	    		<tr style="background-color: #f3f3f3;">
+    	    			<td colspan="14" class="text-right"></td>
+    	    			<td class="text-right" style="border-top: 2px double #444242;"><strong style="font-size: 15px;">{{number_format($remainingTotal,2)}}<strong></td>
+    	    		</tr>
+                @endif
 	    </tbody>
 	 </table>
 </body>
