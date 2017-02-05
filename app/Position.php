@@ -8,7 +8,7 @@ class Position extends Model {
             // TYPE A
             "SUPERVISOR" => "TYPE_A",
             "LEADMAN" => "TYPE_A",
-            "SAFETY_OFFICER_A" => "TYPE_A",
+            "SAFETY_OFFICER" => "TYPE_A",
             "WIELDER_A" => "TYPE_A",
             "ELECTRICIAN_A" => "TYPE_A",
             "MACHINIST" => "TYPE_A",
