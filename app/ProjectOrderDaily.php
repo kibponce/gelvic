@@ -20,9 +20,15 @@ class ProjectOrderDaily extends Model
    protected $dates = ['deleted_at'];
 
     public function getTotalCost($day){
-    	$projectOrderDailyManpower = projectOrderDailyManpower::where('po_daily_id', $this->id)->get();
+    	$projectOrderDailyManpower = ProjectOrderDailyManpower::where('po_daily_id', $this->id)
+    													->join('po_dailies', function ($q) {
+    														$q->select('po_dailies.id as po_daily_id', 'po_dailies.*');
+    														$q->on('po_dailies.id','=', 'po_dailies_manpower.po_daily_id');
+    													})
+    													->select('po_dailies_manpower.id as id', 'po_dailies_manpower.*', 'po_dailies.id as daily_id', 'po_dailies.date', 'po_dailies.status', 'po_dailies.activity', 'po_dailies.isHoliday', 'po_dailies.isRegular')
+    													->get();
 
-        $total = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, $day);
+        $total = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, false);
 
     	return $total->total;
     }

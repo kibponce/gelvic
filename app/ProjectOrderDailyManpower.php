@@ -93,7 +93,7 @@ class ProjectOrderDailyManpower extends Model
         //Regular
         $total_no_of_hours = 0;
         $total_reg_day= 0;
-
+        
         //OT
         $total_ot_no_hours= 0;
         $total_ot = 0;
