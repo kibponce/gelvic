@@ -25,7 +25,7 @@ class ProjectOrderDaily extends Model
     														$q->select('po_dailies.id as po_daily_id', 'po_dailies.*');
     														$q->on('po_dailies.id','=', 'po_dailies_manpower.po_daily_id');
     													})
-    													->select('po_dailies_manpower.id as id', 'po_dailies_manpower.*', 'po_dailies.id as daily_id', 'po_dailies.date', 'po_dailies.status', 'po_dailies.activity', 'po_dailies.isHoliday', 'po_dailies.isRegular')
+    													->select('po_dailies_manpower.id as id', 'po_dailies_manpower.*', 'po_dailies.id as daily_id', 'po_dailies.date', 'po_dailies.status', 'po_dailies.activity', 'po_dailies.isHoliday', 'po_dailies.isRegular', 'po_dailies.isSpecial')
     													->get();
 
         $total = ProjectOrderDailyManpower::getTotal($projectOrderDailyManpower, false);
@@ -49,7 +49,7 @@ class ProjectOrderDaily extends Model
 															$q->select('po_dailies.id as po_daily_id', 'po_dailies.*');
 															$q->on('po_dailies.id','=', 'po_dailies_manpower.po_daily_id');
 														})
-														->select('po_dailies_manpower.id as id', 'po_dailies_manpower.*', 'po_dailies.id as daily_id', 'po_dailies.date', 'po_dailies.status', 'po_dailies.activity', 'po_dailies.isHoliday', 'po_dailies.isRegular')
+														->select('po_dailies_manpower.id as id', 'po_dailies_manpower.*', 'po_dailies.id as daily_id', 'po_dailies.date', 'po_dailies.status', 'po_dailies.activity', 'po_dailies.isHoliday', 'po_dailies.isRegular', 'po_dailies.isSpecial')
 														->get();
 
 	    $total = (object)[];
@@ -65,11 +65,15 @@ class ProjectOrderDaily extends Model
 	    $dayStatus = "NORMAL";
 	    if($projectDaily->isSunday && !$projectDaily->isHoliday && !$projectDaily->isRegular) {
 	        $dayStatus = "SUNDAY";
+	    }else if($projectDaily->isSpecial && $projectDaily->isHoliday){
+	        $dayStatus = "SUNDAYHOLIDAY";
 	    }else if(!$projectDaily->isSunday && $projectDaily->isHoliday){
 	        $dayStatus = "HOLIDAY";
 	    }else if($projectDaily->isSunday && $projectDaily->isHoliday){
 	        $dayStatus = "SUNDAYHOLIDAY";
-	    }
+	    }else if($projectDaily->isSpecial){
+			$dayStatus = "SUNDAY";
+		}
 
 		foreach ($projectOrderDailyManpower as $k=>$v) {
 			$v->manpower = Manpower::find($v->manpower_id);

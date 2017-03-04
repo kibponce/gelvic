@@ -110,9 +110,15 @@ class ProjectOrderDailyManpower extends Model
             $dayStatus = "NORMAL";
             if($v->isSunday && !$v->isHoliday && !$v->isRegular) {
                 $dayStatus = "SUNDAY";
+            }else if($v->isSpecial && $v->isHoliday){
+                $dayStatus = "SUNDAYHOLIDAY";
             }else if(!$v->isSunday && $v->isHoliday){
                 $dayStatus = "HOLIDAY";
             }else if($v->isSunday && $v->isHoliday){
+                $dayStatus = "SUNDAYHOLIDAY";
+            }else if($v->isSpecial){
+                $dayStatus = "SUNDAY";
+            }else if($v->isSpecial && $v->isHoliday){
                 $dayStatus = "SUNDAYHOLIDAY";
             }
 

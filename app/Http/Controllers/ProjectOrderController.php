@@ -130,11 +130,15 @@ class ProjectOrderController extends Controller {
             $dayStatus = "NORMAL";
             if($v->isSunday && !$v->isHoliday && !$v->isRegular) {
                 $dayStatus = "SUNDAY";
-            }else if(!$v->isSunday && $v->isHoliday){
+            }else if($v->isSpecial && $v->isHoliday){
+				$dayStatus = "SUNDAYHOLIDAY";
+			}else if(!$v->isSunday && $v->isHoliday){
                 $dayStatus = "HOLIDAY";
             }else if($v->isSunday && $v->isHoliday){
                 $dayStatus = "SUNDAYHOLIDAY";
-            }
+            }else if($v->isSpecial){
+				$dayStatus = "SUNDAY";
+			}
 
             $v->totalCost = $v->getTotalCost($dayStatus);
             //Total All manpower Expense
@@ -271,9 +275,11 @@ class ProjectOrderController extends Controller {
         $daily_id = $request->input("daily_id");
         $holiday = $request->input("holiday");
         $regular = $request->input("regular");
+        $special = $request->input("special");
         $daily = ProjectOrderDaily::find($daily_id);
         $daily->isHoliday = intval($holiday);
         $daily->isRegular = intval($regular);
+        $daily->isSpecial = intval($special);
         $daily->activity = $activity;
         if($daily->save()){
             return redirect()->action('ProjectOrderController@showProjectDaily', $daily->id)->with('success', 'Daily Activty is succesfully updated');
