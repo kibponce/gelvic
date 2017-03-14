@@ -15,7 +15,9 @@
                 <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printDaily', ['daily_id' => $projectDaily->id, 'isBilling' => false ]) }}">
                     <i class="fa fa-print"></i> Costing
                 </a>
-                
+                <a type="button" class="btn btn-info btn-sm pull-right" target="_blank" href="{{ action('ProjectOrderController@printDailyEquipment', ['daily_id' => $projectDaily->id, 'isBilling' => false ]) }}">
+                    <i class="fa fa-print"></i> Equipment
+                </a>
             </div>
         </div>
     </div>
@@ -284,6 +286,65 @@
                     </table>
                 </div>
                 <!-- /.panel-body -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-wrench fa-fw"></i> Equipment
+
+                    <div class="pull-right">
+                        <a href="#" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#equipmentModal" id="addEquipment">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </div>
+                </div>
+                <!-- /.panel-heading -->
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Rate</th>
+                                <th>Duration</th>
+                                <th>Total</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($projectDailyEquipment as $k=>$v)
+                                <tr>
+                                    <td>{{$v->equipment->equipment_id}}</td>
+                                    <td>{{$v->equipment->name}}</td>
+                                    <td class="text-right">{{$v->rate}}</td>
+                                    <td class="text-right">{{$v->duration}}</td>
+                                    <td class="text-right">{{number_format( $v->total, 2 ) }}</td>
+                                    <td class="text-center"  width=80>
+                                        <a type="button" class="btn btn-success btn-xs editEquipment" data-equipment="{{$v->equipment->id}}" data-duration="{{$v->duration}}" data-id="{{$v->id}}">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                        <a type="button" class="btn btn-danger btn-xs" data-id="{{$v->id}}""  href="{{ action('ProjectOrderController@deleteEquipmentOnProjectDaily', $v->id) }}">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            <tr style="background-color: #95ec90;">
+                                <td colspan="4" class="text-right"><strong>Total</strong></td>
+                                <td class="text-right"><strong>{{ number_format( $grandTotalEquipment, 2) }}</strong></td>
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.panel-body -->
+            </div>
         </div>
     </div>
 </div>
@@ -468,6 +529,64 @@
             <!-- /.modal-content -->
         </div>
     </div>
+
+    <!-- Equipment Modal -->
+    <div class="modal fade" id="equipmentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                {!! Form::open(array('action' => 'ProjectOrderController@addEquipmentOnProjectDaily')) !!}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Equipment Form</h4>
+                </div>
+                <div class="modal-body"> 
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="form-group @if ($errors->has('equipment')) has-error  @endif">
+                                    <label>Equipment</label>
+                                    <input class="form-control" 
+                                            name="equipment_id"
+                                            id="equipment_id"
+                                            type="hidden"
+                                            value="">
+                                    <input class="form-control" 
+                                            placeholder="Enter Description" 
+                                            name="po_daily_id"
+                                            type="hidden"
+                                            value="{{$projectDaily->id}}">
+                                    <select class="form-control" name="equipment" id="equipment">
+                                        <option value="">All Equipments</option>
+                                        @foreach($equipments as $k=>$v)
+                                            <option value="{{$v->id}}">{{$v->name}}</option>
+                                        @endforeach
+                                    </select>
+                                    @if ($errors->has('equipment'))
+                                        <p class="help-block">{{ $errors->first('equipment') }} </p>
+                                    @endif
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-group @if ($errors->has('duration')) has-error  @endif">
+                                    <label>Duration</label>
+                                    <input type="text" class="form-control" placeholder="Enter Duration" name="duration" id="duration" value="@if(old('duration')){{old('duration')}}@endif">
+                                    @if ($errors->has('duration'))
+                                        <p class="help-block">{{ $errors->first('duration') }} </p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+                {!! Form::close() !!}
+            </div>
+            <!-- /.modal-content -->
+        </div>
+    </div>
 @stop
 
 @section('scripts')
@@ -475,6 +594,7 @@
         $(function () {
             var isHoliday = "{{$projectDaily->isHoliday}}";
             var isRegular = "{{$projectDaily->isRegular}}";
+            var error = "{{$error}}";
             $('#time_in').datetimepicker({
                 format : "YYYY-MM-DD hh:mm A",
                 inline: true,
@@ -551,6 +671,28 @@
                             }
                         }
                     ] 
+            });
+
+            if(error === "EQUIPMENT") {
+                $('#equipmentModal').modal('show');
+            }
+
+            $("#addEquipment").click(function (e) {
+                $("#equipment_id").val("");
+                $("#equipment").val("").trigger("change");
+                $("#duration").val("");
+            });
+
+            $(".editEquipment").click(function (e) {
+                var id = $(this).attr("data-id"),
+                    equipment = $(this).attr("data-equipment"),
+                    duration = $(this).attr("data-duration");
+
+                $("#equipment_id").val(id);
+                $("#equipment").val(equipment).trigger("change");
+                $("#duration").val(duration);
+
+                $('#equipmentModal').modal('show');
             });
         });
     </script>

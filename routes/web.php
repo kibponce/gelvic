@@ -20,6 +20,8 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::get('/show/{id?}', 'ProjectOrderController@show');
     Route::post('/generateDaily/', 'ProjectOrderController@generateDaily');
     Route::get('/daily/{po_daily_id?}', 'ProjectOrderController@showProjectDaily');
+    Route::post('/daily/equipment/post', 'ProjectOrderController@addEquipmentOnProjectDaily');
+    Route::get('/daily/equipment/delete/{id?}', 'ProjectOrderController@deleteEquipmentOnProjectDaily');
     Route::get('/assign-manpower/{po_id?}/{manpower_id?}', 'ProjectOrderController@assignManpowerToProject');
     Route::get('/delete-manpower/{id?}', 'ProjectOrderController@deleteManpowerFromProject');
     Route::get('/assign-daily-manpower/{po_daily_id?}/{manpower_id}', 'ProjectOrderController@assignManpowerToProjectDaily');
@@ -29,6 +31,7 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::post('/delete-daily-activty/', 'ProjectOrderController@deleteActivity');
     Route::get('/delete-daily-manpower/{id?}/{po_daily_id?}', 'ProjectOrderController@deleteDailyManpower');
     Route::get('/print/daily/{po_daily_id?}/{isBilling?}', 'ProjectOrderController@printDaily');
+    Route::get('/print/equipment/{po_daily_id?}/{isBilling?}', 'ProjectOrderController@printDailyEquipment');
     Route::get('/print/summary/{po_id?}/{isBilling?}', 'ProjectOrderController@printSummary');
     Route::post('/billings/set', 'ProjectOrderController@setBillings');
 });
