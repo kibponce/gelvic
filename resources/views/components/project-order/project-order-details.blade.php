@@ -107,7 +107,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-4 col-md-4">
+        <div class="col-lg-5 col-md-5">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <i class="fa fa-building fa-fw"></i> Project Daily
@@ -120,42 +120,59 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
-                    <!-- /.list-group -->
-                    <div class="list-group">
-                        @foreach ($projectDaily as $k=>$v)
-                            <a href="{{ action('ProjectOrderController@showProjectDaily', $v->id) }}" class="list-group-item">
-                                <div>
-                                    <i class="fa fa-calendar fa-fw"></i> {{$v->date}}
-                                    <span class="pull-right text-muted small badge badge-red"><em>{{number_format($v->totalCost, 2)}}</em>
-                                    </span>
-                                </div>
-                                @if($v->isHoliday)
-                                    <span class="label label-info">Holiday</span>
-                                @endif
-                                @if($v->isRegular)
-                                    <span class="label label-primary">Regular</span>
-                                @endif
-                                @if($v->isSunday)
-                                    <span class="label label-warning">Sunday</span>
-                                @endif
-								@if($v->isSpecial)
-                                    <span class="label label-success">Special</span>
-                                @endif
-                            </a>
-                        @endforeach
-                        <a href="javascript://" class="list-group-item" style="background-color: #95ec90;">
-                            <div>
-                                <strong>TOTAL</strong>  
-                                <span class="pull-right text-muted small badge badge-red"><em>{{number_format($projectManpowerTotalExpense,2)}}</em>
-                                </span>
-                            </div>
-                        </a>
-                    </div>
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Date</th>
+                                <th class="text-center">Equipment</th>
+                                <th class="text-center">Manpower</th>
+                                <th class="text-center" width="30">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($projectDaily as $k=>$v)
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <i class="fa fa-calendar fa-fw"></i> {{$v->date}}
+                                            @if($v->isHoliday)
+                                                <span class="label label-info">Holiday</span>
+                                            @endif
+                                            @if($v->isRegular)
+                                                <span class="label label-primary">Regular</span>
+                                            @endif
+                                            @if($v->isSunday)
+                                                <span class="label label-warning">Sunday</span>
+                                            @endif
+                                        </div>
+                                    </td>
+                                    
+                                    <td class="text-right">
+                                        {{number_format($v->totalEquipment, 2)}}
+                                    </td>
+                                    <td class="text-right">
+                                        {{number_format($v->totalCost, 2)}}
+                                    </td>
+                                    <td class="text-center" width=30>
+                                        <a type="button" class="btn btn-primary btn-xs" href="{{ action('ProjectOrderController@showProjectDaily', $v->id) }}">
+                                            <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach 
+                            <tr>
+                                <td><strong>TOTAL</strong></td>
+                                <td class="text-right"><strong>{{number_format($projectEquipmentTotalRental,2)}}</strong></td>
+                                <td class="text-right"><strong>{{number_format($projectManpowerTotalExpense,2)}}</strong></td>
+                                <td></td>
+                            </tr>                      
+                        </tbody>
+                    </table>
                 </div>
                 <!-- /.panel-body -->
             </div>
         </div>
-        <div class="col-lg-8 col-md-8">
+        <div class="col-lg-7 col-md-7">
         	<div class="panel panel-default">
         	    <div class="panel-heading">
         	        <i class="fa fa-building fa-fw"></i> Materials
@@ -213,63 +230,61 @@
         	    <!-- /.panel-body -->
             </div>
 
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <i class="fa fa-building fa-fw"></i> Equipment
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="modal" data-target="#equipmentsModal">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </div>
+            <!-- <div class="panel panel-default">
+                <div class="panel-heading">
+                    <i class="fa fa-building fa-fw"></i> Equipment
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="modal" data-target="#equipmentsModal">
+                            <i class="fa fa-plus"></i>
+                        </button>
                     </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <table class="table table-bordered table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th class="text-left">Name</th>
-                                    <th class="text-right">Rate</th>
-                                    <th class="text-center">Description</th>
-                                    <th class="text-center">Duration</th>
-                                    <th class="text-right">Expense</th>
-                                    <th class="text-right">Profit</th>
-                                    <th class="text-center"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($projectEquipment as $k=>$v)
-                                    <tr>
-                                        <td class="text-left">{{$v->equipment->name}}</td>
-                                        <td class="text-right">{{number_format($v->rate,2)}}</td>
-                                        <td class="text-center">{{$v->description}}</td>
-                                        <td class="text-center">{{$v->duration}}</td>
-                                        <td class="text-right">{{number_format($v->expense,2)}}</td>
-                                        <td class="text-right">{{number_format($v->profit,2)}}</td>
-                                        <td class="text-center">
-                                            <a type="button" class="btn btn-danger btn-xs" href="{{action('EquipmentController@projectDelete', array('id' => $v->id, 'po_id' => $projectOrder->id))}}">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                @if(count($projectEquipment) == 0)
-                                    <tr>
-                                        <td colspan="7" class="text-center">No Items Added</td>
-                                    </tr>
-                                @else
-                                    <tr style="background-color: #95ec90;">
-                                        <td colspan="4" class="text-right"><strong>Total</strong></td>
-                                        <td class="text-right"><strong>{{number_format($projectEquipmentTotalExpense,2)}}</strong></td>
-                                        <td  class="text-right"><strong>{{number_format($projectEquipmentTotaProfit,2)}}</strong></td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                @endif
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.panel-body -->
                 </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Name</th>
+                                <th class="text-right">Rate</th>
+                                <th class="text-center">Description</th>
+                                <th class="text-center">Duration</th>
+                                <th class="text-right">Expense</th>
+                                <th class="text-right">Profit</th>
+                                <th class="text-center"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($projectEquipment as $k=>$v)
+                                <tr>
+                                    <td class="text-left">{{$v->equipment->name}}</td>
+                                    <td class="text-right">{{number_format($v->rate,2)}}</td>
+                                    <td class="text-center">{{$v->description}}</td>
+                                    <td class="text-center">{{$v->duration}}</td>
+                                    <td class="text-right">{{number_format($v->expense,2)}}</td>
+                                    <td class="text-right">{{number_format($v->profit,2)}}</td>
+                                    <td class="text-center">
+                                        <a type="button" class="btn btn-danger btn-xs" href="{{action('EquipmentController@projectDelete', array('id' => $v->id, 'po_id' => $projectOrder->id))}}">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @if(count($projectEquipment) == 0)
+                                <tr>
+                                    <td colspan="7" class="text-center">No Items Added</td>
+                                </tr>
+                            @else
+                                <tr style="background-color: #95ec90;">
+                                    <td colspan="4" class="text-right"><strong>Total</strong></td>
+                                    <td class="text-right"><strong>{{number_format($projectEquipmentTotalExpense,2)}}</strong></td>
+                                    <td  class="text-right"><strong>{{number_format($projectEquipmentTotaProfit,2)}}</strong></td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div> -->
         </div>
     </div>
 @stop

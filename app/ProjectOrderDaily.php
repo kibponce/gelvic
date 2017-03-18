@@ -3,7 +3,9 @@
 namespace App;
 use Carbon\Carbon;
 use App\ProjectOrderDailyManpower;
+use App\ProjectOrderDailyEquipment;
 use App\ProjectOrder;
+use App\Equipment;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 

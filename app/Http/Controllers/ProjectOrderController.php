@@ -7,6 +7,7 @@ use App\Position;
 use App\Equipment;
 use App\ProjectOrderMaterials;
 use App\ProjectOrderDailyManpower;
+use App\ProjectOrderDailyEquipment;
 use App\ProjectOrderEquipment;
 use App\Rate;
 use Illuminate\Http\Request;
@@ -120,6 +121,7 @@ class ProjectOrderController extends Controller {
         }
 
         $projectManpowerTotalExpense = 0;
+        $projectEquipmentTotalRental = 0;
         //Get Total Expenses on all PO Dailies
         foreach ($projectDaily as $k=>$v) {
             $dateFormatted = new Carbon($v->date);
@@ -146,6 +148,17 @@ class ProjectOrderController extends Controller {
 
             //Include Total Expense on Project
         	$projectTotalExpenses = $projectTotalExpenses + $v->totalCost;
+
+            //equipment process
+            $projectDailyEquipment = ProjectOrderDailyEquipment::where('po_daily_id', $v->id)->get();
+            $totalEquipment = 0;
+            foreach($projectDailyEquipment as $k=>$val) {
+                $val->total = $val->rate * $val->duration;
+                $totalEquipment += $val->total;
+            }
+
+            $v->totalEquipment = $totalEquipment;
+            $projectEquipmentTotalRental += $v->totalEquipment;
         }
 
         //Get All Materials on the PO
@@ -167,6 +180,7 @@ class ProjectOrderController extends Controller {
             "projectEquipmentTotalExpense" => $projectEquipmentTotalExpense,
             "projectEquipmentTotaProfit" => $projectEquipmentTotaProfit,
             "projectManpowerTotalExpense" => $projectManpowerTotalExpense,
+            "projectEquipmentTotalRental" => $projectEquipmentTotalRental,
             "projectTotalExpenses" => $projectTotalExpenses,
             "totalMaterialsExpense" => $totalMaterialsExpense,
             "projectRemainingBalance" => $projectOrder->amount - $projectTotalExpenses + $projectEquipmentTotaProfit,
@@ -196,9 +210,60 @@ class ProjectOrderController extends Controller {
  		}
     }
 
-    public function showProjectDaily($po_daily_id){
+    //Process Project Daily View
+    public function showProjectDaily($po_daily_id, Request $request){
+        $projectDailyEquipment = ProjectOrderDailyEquipment::where('po_daily_id', $po_daily_id)->get();
+        $grandTotalEquipment = 0;
+        foreach($projectDailyEquipment as $k=>$v) {
+            $v->equipment = Equipment::find($v->equipment_id);
+            $v->total = $v->rate * $v->duration;
+            $grandTotalEquipment += $v->total;
+        }
+
     	$data = ProjectOrderDaily::processProjectDialy($po_daily_id);
+        $data['equipments'] = Equipment::all();
+        $data['projectDailyEquipment'] = $projectDailyEquipment;
+        $data['grandTotalEquipment'] = $grandTotalEquipment;
+        $data['error'] = $request->get('error');
         return view('components.project-order.project-daily', $data);
+    }
+
+    public function addEquipmentOnProjectDaily(Request $request){
+        $po_daily_id = $request->input('po_daily_id');
+        $equipment_id = $request->input('equipment_id');
+        $validate = Validator::make($request->all(), ProjectOrderDailyEquipment::$validation_rules);
+        if ($validate->passes()) {
+           $equipment = $request->input('equipment');
+           $equipmentData = Equipment::find($equipment);
+           $duration = $request->input('duration');
+           $rate = $equipmentData->rate;
+
+           if($equipment_id != "") {
+               $projectEquipment = ProjectOrderDailyEquipment::find($equipment_id);
+           }else{
+               $projectEquipment = new ProjectOrderDailyEquipment;
+           }
+           
+           $projectEquipment->equipment_id = $equipment;
+           $projectEquipment->po_daily_id = $po_daily_id;
+           $projectEquipment->duration = $duration;
+           $projectEquipment->rate = $rate;
+           if($projectEquipment->save()){
+               return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Equipment has been successfully saved');
+           }
+
+        }else{
+            return redirect()->action('ProjectOrderController@showProjectDaily', array( 'po_daily_id' => $po_daily_id, 'error' => "EQUIPMENT"))->withErrors($validate)->withInput();
+        }
+    }
+
+    public function deleteEquipmentOnProjectDaily($id) {
+        $po_daily_equipment = ProjectOrderDailyEquipment::find($id);
+        $po_daily_id = $po_daily_equipment->po_daily_id;
+
+        if($po_daily_equipment->delete()){
+            return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Equipment has been successfully deleted');
+        }
     }
 
     public function assignManpowerToProject($po_id, $manpower_id) {
@@ -300,6 +365,26 @@ class ProjectOrderController extends Controller {
 
         $manpower_daily->delete();
         return redirect()->action('ProjectOrderController@showProjectDaily', $po_daily_id)->with('success', 'Manpower is succesfully removed');
+    }
+
+    public function printDailyEquipment($po_daily_id, $isBilling = false) {
+        $projectDailyEquipment = ProjectOrderDailyEquipment::where('po_daily_id', $po_daily_id)->get();
+        $grandTotalEquipment = 0;
+        foreach($projectDailyEquipment as $k=>$v) {
+            $v->equipment = Equipment::find($v->id);
+            $v->total = $v->rate * $v->duration;
+            $grandTotalEquipment += $v->total;
+        }
+
+        $data = ProjectOrderDaily::processProjectDialy($po_daily_id);
+        $data['projectDailyEquipment'] = $projectDailyEquipment;
+        $data['grandTotalEquipment'] = $grandTotalEquipment;
+
+        $pdf = PDF::loadView('components.project-order.print.equipment', $data);
+        $pdf->setPaper('Legal');
+        
+        // Output the generated PDF to Browser
+        return $pdf->stream();
     }
 
     public function printDaily($po_daily_id, $isBilling = false) {
