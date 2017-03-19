@@ -88,7 +88,7 @@
 	    </thead>
 	    <tbody>
 	    	<tr>
-	    		<td width="30" colspan="14">PO. No</td>
+	    		<td width="30" colspan="14">PO. No : {{$projectOrder->po_number}}</td>
 	    		<td class="text-right">
 	    			<strong style="font-size: 15px;">
 	    				@if($projectOrder->amount > 0)

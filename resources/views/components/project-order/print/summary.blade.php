@@ -248,7 +248,7 @@
     		    </tr>
 	    	@endif
 	    	<tr>
-	    		<td width="30" colspan="14">PO. No</td>
+	    		<td width="30" colspan="14">PO. No : <strong>{{$projectOrder->po_number}}</strong></td>
 	    		<td class="text-right">
                     <strong style="font-size: 15px;">
                         @if($projectOrder->amount > 0)
