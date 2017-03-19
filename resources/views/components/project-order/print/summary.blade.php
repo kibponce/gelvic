@@ -490,7 +490,11 @@
 	    			<td colspan="14"> Materials & Consumables</td>
 	    			<td class="text-right"><strong>{{number_format($totalMaterialsExpense,2)}}</strong></td>
 	    		</tr>
-               
+				<tr>
+	    			<td colspan="14"> Tools & Equipments</td>
+	    			<td class="text-right"><strong>@if(!$isBilling) + @endif{{number_format($projectEquipmentTotalRental,2)}}
+					</strong></td>
+	    		</tr>
     	    		<tr style="background-color: #f3f3f3;">
     	    			<td colspan="14" class="text-right" style="border-top: 2px solid #272626;"></td>
     	    			<td class="text-right" style="border-top: 2px solid #272626;"><strong style="font-size: 15px;">{{number_format($total,2)}}<strong></td>

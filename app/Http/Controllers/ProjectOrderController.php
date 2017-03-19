@@ -316,6 +316,7 @@ class ProjectOrderController extends Controller {
     	$in = $request->input('in');
         $out = $request->input('out');
     	$paidBreak = $request->input('paid_break');
+    	$isSpecial = $request->input('special');
     	$id = $request->input('id');
 
     	$manpower_daily = ProjectOrderDailyManpower::find($id);
@@ -330,6 +331,7 @@ class ProjectOrderController extends Controller {
     	$manpower_daily->in = $time_in->toDateTimeString();
         $manpower_daily->out = $time_out->toDateTimeString();
     	$manpower_daily->is_paid_break = intval($paidBreak);
+    	$manpower_daily->is_special = intval($isSpecial);
     	if($manpower_daily->save()){
     		return redirect()->action('ProjectOrderController@showProjectDaily', $manpower_daily->po_daily_id)->with('success', 'Manpower Time Log is updated');
     	}
@@ -413,9 +415,10 @@ class ProjectOrderController extends Controller {
             $v->dailyData = ProjectOrderDaily::processProjectDialy($v->id, $isBilling);
             $total = $total + $v->dailyData['total']->total;
         }
-
+		
         //Get All Materials on the PO
         $totalMaterialsExpense = 0;
+        $totalEquipmentExpense = 0;
         $projectOrderMaterials = ProjectOrderMaterials::where('po_id', $po_id)->get();
         foreach ($projectOrderMaterials as $k=>$v) {
             $v->total_amount = ($v->quantity * $v->unit_cost) * $v->duration;
@@ -425,8 +428,31 @@ class ProjectOrderController extends Controller {
         if($isBilling) {
             $totalMaterialsExpense = $projectOrder->materials; 
         }
-        $total = $total + $totalMaterialsExpense;
+		
+		$projectDaily = ProjectOrderDaily::where('po_id', $po_id)->get()->sortBy('date');
+		$projectEquipmentTotalRental = 0;
+		foreach ($projectDaily as $k=>$v) {
+			//equipment process
+			$projectDailyEquipment = ProjectOrderDailyEquipment::where('po_daily_id', $v->id)->get();
 
+			$totalEquipment = 0;
+			foreach($projectDailyEquipment as $k=>$val) {
+				$val->total = $val->rate * $val->duration;
+				$totalEquipment += $val->total;
+			}
+
+			$v->totalEquipment = $totalEquipment;
+			$projectEquipmentTotalRental += $v->totalEquipment;
+		}
+		
+		
+		
+		if($isBilling) {
+			$total = $total + $totalMaterialsExpense + $projectEquipmentTotalRental;
+		}else{
+			$total = $total + $totalMaterialsExpense - $projectEquipmentTotalRental;
+		}
+				
         $type_a_rates = $this->getBillingsRate($projectOrder->type_a);
         $type_b_rates = $this->getBillingsRate($projectOrder->type_b);
         $type_c_rates = $this->getBillingsRate($projectOrder->type_c);
@@ -437,6 +463,7 @@ class ProjectOrderController extends Controller {
             "total" => $total,
             "remainingTotal" => $projectOrder->amount - $total,
             "totalMaterialsExpense" => $totalMaterialsExpense,
+            "projectEquipmentTotalRental" => $projectEquipmentTotalRental,
             "isBilling" => $isBilling,
             "type_a_rates" => $type_a_rates,
             "type_b_rates" => $type_b_rates,
@@ -475,6 +502,7 @@ class ProjectOrderController extends Controller {
         $type_b = $request->input("type_b");
         $type_c = $request->input("type_c");
         $materials = $request->input("materials");
+        $equipment = $request->input("equipment");
         $po_id = $request->input("po_id");
 
         $projectOrder = ProjectOrder::find($po_id);
@@ -498,6 +526,12 @@ class ProjectOrderController extends Controller {
             $projectOrder->materials = $materials;
         }else{
             $projectOrder->materials = 0;
+        }
+		
+		if($equipment) {
+            $projectOrder->equipment = $equipment;
+        }else{
+            $projectOrder->equipment = 0;
         }
 
         $projectOrder->save();

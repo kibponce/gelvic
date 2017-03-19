@@ -62,6 +62,11 @@ class ProjectOrderDailyManpower extends Model
 			$regTotalNPHour = $finishTime->diffInHoursFiltered(function(Carbon $date) {
 	    	   return $date->hour >= 22 || $date->hour < 6; 
 	    	}, $startTime);
+			
+			//If manpower has is special, make rate to sunday
+			if($this->is_special) {
+				$this->day = "SUNDAY";
+			}
 
 	    	$regHourPay = Rate::getRegHourPay($regTotalHour, $this->rate, $this->day);
 	    	$regHourOTPay = Rate::getRegHourOTPay($regTotalOTHour, $this->rate, $this->day);

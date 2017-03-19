@@ -494,7 +494,7 @@
                                         type="hidden"
                                         value="{{$projectOrder->id}}">
                                 <div class="form-group input-group">
-                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_a" value="{{number_format($projectOrder->type_a * 8,2)}}">
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_a" value="{{number_format($projectOrder->type_a * 8,2, '.', '')}}">
                                     <span class="input-group-addon">Rate</span>
                                 </div>
                             </div>
@@ -503,7 +503,7 @@
                             <div class="form-group">
                                 <label>Type B</label>
                                 <div class="form-group input-group">
-                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_b" value="{{number_format($projectOrder->type_b * 8,2)}}">
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_b" value="{{number_format($projectOrder->type_b * 8,2, '.', '')}}">
                                     <span class="input-group-addon">Rate</span>
                                 </div>
                             </div>
@@ -512,7 +512,7 @@
                             <div class="form-group">
                                 <label>Type C</label>
                                 <div class="form-group input-group">
-                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_c" value="{{number_format($projectOrder->type_c * 8,2)}}">
+                                    <input type="text" class="form-control" placeholder="Enter Cost" name="type_c" value="{{number_format($projectOrder->type_c * 8,2, '.', '')}}">
                                     <span class="input-group-addon">Rate</span>
                                 </div>
                             </div>
@@ -520,7 +520,7 @@
                         <div class="col-lg-12">
                             <div class="form-group">
                                 <label>Materials & Consumables</label>
-                                <input type="text" class="form-control" placeholder="Enter Cost" name="materials" value="{{number_format($projectOrder->materials,2)}}">
+                                <input type="text" class="form-control" placeholder="Enter Cost" name="materials" value="{{number_format($projectOrder->materials,2, '.', '')}}">
                             </div>
                         </div>
                     </div>

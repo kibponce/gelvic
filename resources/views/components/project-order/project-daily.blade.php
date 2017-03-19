@@ -137,7 +137,11 @@
                             @foreach ($typeA as $k=>$v)
                                 <tr>
                                     <td>{{$k + 1}}</td>
-                                    <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} </td>
+										<td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} 	
+										@if($v->is_special)
+											<span class="label label-success">Special</span>
+										@endif 
+									</td>
                                     <td width="80">{{$v->time_in}}</td>
                                     <td width="80">{{$v->time_out}}</td>
                                     <td class="text-right">{{number_format($v->rate,2)}}</td>
@@ -183,7 +187,11 @@
                             @foreach ($typeB as $k=>$v)
                                 <tr>
                                     <td>{{$k + 1}}</td>
-                                    <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} </td>
+                                    <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} 
+										@if($v->is_special)
+											<span class="label label-success">Special</span>
+										@endif 
+									</td>
                                     <td width="80">{{$v->time_in}}</td>
                                     <td width="80">{{$v->time_out}}</td>
                                     <td class="text-right">{{number_format($v->rate,2)}}</td>
@@ -228,7 +236,11 @@
                             @foreach ($typeC as $k=>$v)
                                 <tr>
                                     <td>{{$k + 1}}</td>
-                                    <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} </td>
+                                    <td width="140">{{$v->manpower->last_name}}, {{$v->manpower->first_name}} 
+										@if($v->is_special)
+											<span class="label label-success">Special</span>
+										@endif 
+									</td>
                                     <td width="80">{{$v->time_in}}</td>
                                     <td width="80">{{$v->time_out}}</td>
                                     <td class="text-right">{{number_format($v->rate,2)}}</td>
@@ -420,6 +432,11 @@
                                     <input type="checkbox" value="1" name="paid_break" id="paid_break" checked>Paid Break
                                 </label>
                             </div>
+							<div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="1" name="special" id="paid_break">Special
+                                </label>
+                            </div>
                         </div>
                     </div>                     
                     <div class="row">
@@ -602,11 +619,10 @@
         $(function () {
             var isHoliday = "{{$projectDaily->isHoliday}}";
             var isRegular = "{{$projectDaily->isRegular}}";
-<<<<<<< HEAD
             var isSpecial = "{{$projectDaily->isSpecial}}";
-=======
+
             var error = "{{$error}}";
->>>>>>> 5cb5e103a6a14bf31873065818264b5ad4470850
+
             $('#time_in').datetimepicker({
                 format : "YYYY-MM-DD hh:mm A",
                 inline: true,
