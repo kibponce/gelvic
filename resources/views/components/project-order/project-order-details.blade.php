@@ -144,6 +144,9 @@
                                             @if($v->isSunday)
                                                 <span class="label label-warning">Sunday</span>
                                             @endif
+											@if($v->isSpecial)
+                                                <span class="label label-success">Special</span>
+                                            @endif
                                         </div>
                                     </td>
                                     
