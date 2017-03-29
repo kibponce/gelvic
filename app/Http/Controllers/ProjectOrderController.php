@@ -20,19 +20,39 @@ use Input;
 
 class ProjectOrderController extends Controller {
     public function index() {
-    	$po = ProjectOrder::all();
-        
-        foreach ($po as $k=>$v) {
+    	$po = ProjectOrder::where("category", "production")->get();
+        $project = ProjectOrder::where("category", "project")->get();
+
+        $this->processPo($po);
+        $this->processPo($project);
+
+    	$data = array(
+            'po' => $po,
+    	    'project' => $project
+    	);
+
+        return view('components.project-order.project_order', $data);
+    }
+
+    public function changeStatus($po_id) {
+        $po = ProjectOrder::find($po_id);
+        if($po->is_done) {
+            $po->is_done = false;
+        }else{
+            $po->is_done = true;
+        }
+
+        $po->save();
+        return redirect()->action('ProjectOrderController@show', $po_id);
+    }
+
+    private static function processPo($data) {
+        foreach ($data as $k=>$v) {
             $startDateFormatted = new Carbon($v->start_date);
             $v->start_date = $startDateFormatted->format("m/d/Y");
             $endDateFormatted = new Carbon($v->end_date);
             $v->end_date = $endDateFormatted->format("m/d/Y");
         }
-    	$data = array(
-    	    'po' => $po
-    	);
-
-        return view('components.project-order.project_order', $data);
     }
 
     public function add($id = "") {
@@ -58,7 +78,8 @@ class ProjectOrderController extends Controller {
     	    $amount = $request->input('amount');
     	    $start_date = $request->input('start_date');
     	    $end_date = $request->input('end_date');
-    	    $area = $request->input('area');
+            $area = $request->input('area');
+    	    $category = $request->input('category');
             $description = $request->input('description');
     	    $deliver_to = $request->input('deliver_to');
 
@@ -77,7 +98,8 @@ class ProjectOrderController extends Controller {
     	    $po->amount = $amount;
     	    $po->start_date = $start_date;
     	    $po->end_date = $end_date;
-    	    $po->area = $area;
+            $po->area = $area;
+    	    $po->category = $category;
             $po->description = $description;
             $po->deliver_to = $deliver_to;
 

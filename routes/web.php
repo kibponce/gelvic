@@ -18,6 +18,7 @@ Route::group(['prefix' => 'project-order'], function () {
     Route::get('/add/{id?}', 'ProjectOrderController@add');
     Route::post('/post', 'ProjectOrderController@post');
     Route::get('/show/{id?}', 'ProjectOrderController@show');
+    Route::get('/po/changeStatus/{id?}', 'ProjectOrderController@changeStatus');
     Route::post('/generateDaily/', 'ProjectOrderController@generateDaily');
     Route::get('/daily/{po_daily_id?}', 'ProjectOrderController@showProjectDaily');
     Route::post('/daily/equipment/post', 'ProjectOrderController@addEquipmentOnProjectDaily');

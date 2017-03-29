@@ -117,7 +117,19 @@
                             </div>
                         </div>
                     </div>
-                     <div class="row">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select name="category"
+                                        class="form-control">
+                                        <option value="production">Production</option>
+                                        <option value="project">Project</option>
+                                    </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Deliver To</label>

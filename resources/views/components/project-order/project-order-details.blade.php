@@ -44,7 +44,8 @@
         </div>
         <div class="col-xs-2 col-md-2">
             <small class="stats-label">Status</small>
-            <h4><label class="label label-info">@if($projectOrder->is_done == 0) IN PROGRESS @else @done @endif</label></h4>
+            <h4><a href="{{ action('ProjectOrderController@changeStatus', $projectOrder->id) }}"
+                class="btn @if($projectOrder->is_done == 0) btn-info @else btn-success @endif">@if($projectOrder->is_done == 0) IN PROGRESS @else DONE @endif</a></h4>
         </div>
     </div>
     <!-- /.row -->
