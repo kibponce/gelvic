@@ -52,6 +52,10 @@
                             <strong class="stats-label">Date</strong> 
                             <h4>{{$projectDaily->date}}</h4>
                         </div>
+						<div class="col-xs-6 col-md-6">
+                            <strong class="stats-label">Type</strong> 
+                            <h4><strong>{{$projectOrder->type}}</strong></h4>
+                        </div>
                         <div class="col-xs-6 col-md-6">
                             @if($projectDaily->isHoliday)
                                 <span class="label label-info">Holiday</span>
@@ -434,7 +438,12 @@
                             </div>
 							<div class="checkbox">
                                 <label>
-                                    <input type="checkbox" value="1" name="special" id="paid_break">Special
+                                    <input type="checkbox" value="1" name="special" id="special">Special
+                                </label>
+                            </div>
+							<div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="1" name="overtime" id="overtime">Overtime
                                 </label>
                             </div>
                         </div>

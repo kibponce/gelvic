@@ -32,7 +32,11 @@
     <div class="row">
         <div class="col-xs-2 col-md-2">
             <small class="stats-label">PO Number</small>
-            <h4>{{$projectOrder->po_number}}</h4>
+            <h4><strong>{{$projectOrder->po_number}}</strong></h4>
+        </div>
+		<div class="col-xs-4 col-md-4">
+            <small class="stats-label">PO Type</small>
+            <h4><strong>{{$projectOrder->type}}</strong></h4>
         </div>
         <div class="col-xs-2 col-md-2">
             <small class="stats-label">Start Date</small>

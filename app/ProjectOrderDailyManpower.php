@@ -31,7 +31,7 @@ class ProjectOrderDailyManpower extends Model
     		$time_in = $time_in->format('Y-m-D h:i:s');
     		$startTime = Carbon::parse($this->in);
     	}
-
+				
     	if($this->out) {
     		$time_out = new Carbon($this->out);
     		$time_out = $time_out->format('Y-m-d h:i:s');
@@ -67,11 +67,16 @@ class ProjectOrderDailyManpower extends Model
 			if($this->is_special) {
 				$this->day = "SUNDAY";
 			}
-
-	    	$regHourPay = Rate::getRegHourPay($regTotalHour, $this->rate, $this->day);
-	    	$regHourOTPay = Rate::getRegHourOTPay($regTotalOTHour, $this->rate, $this->day);
-	    	$regHourNPPay = Rate::getRegHourNPPay($regTotalNPHour, $this->rate, $this->day);	
-    		
+			
+			// If manpower hours is for overtime PO. print only overtime rate
+			if($this->is_overtime) {
+				$regTotalOTHour = $regTotalHour;
+				$regTotalHour = 0;
+			}
+			
+			$regHourPay = Rate::getRegHourPay($regTotalHour, $this->rate, $this->day);
+			$regHourOTPay = Rate::getRegHourOTPay($regTotalOTHour, $this->rate, $this->day);
+	    	$regHourNPPay = Rate::getRegHourNPPay($regTotalNPHour, $this->rate, $this->day);	 		
     	}
     	     
         $return->paxCount = $paxCount;
@@ -110,6 +115,7 @@ class ProjectOrderDailyManpower extends Model
         $totalExpenses = 0;
 
         foreach ($data as $k=>$v) {
+
             $dateFormatted = new Carbon($v->date);
             $v->isSunday = $dateFormatted->dayOfWeek == Carbon::SUNDAY;
             $dayStatus = "NORMAL";

@@ -247,6 +247,7 @@ class ProjectOrderController extends Controller {
         $data['projectDailyEquipment'] = $projectDailyEquipment;
         $data['grandTotalEquipment'] = $grandTotalEquipment;
         $data['error'] = $request->get('error');
+
         return view('components.project-order.project-daily', $data);
     }
 
@@ -339,6 +340,7 @@ class ProjectOrderController extends Controller {
         $out = $request->input('out');
     	$paidBreak = $request->input('paid_break');
     	$isSpecial = $request->input('special');
+		$overtime = $request->input('overtime');
     	$id = $request->input('id');
 
     	$manpower_daily = ProjectOrderDailyManpower::find($id);
@@ -349,11 +351,13 @@ class ProjectOrderController extends Controller {
 
     	$time_in = Carbon::instance($dateTime_in);
     	$time_out = Carbon::instance($dateTime_out);
-        
+
     	$manpower_daily->in = $time_in->toDateTimeString();
         $manpower_daily->out = $time_out->toDateTimeString();
     	$manpower_daily->is_paid_break = intval($paidBreak);
     	$manpower_daily->is_special = intval($isSpecial);
+    	$manpower_daily->is_overtime = intval($overtime);
+		
     	if($manpower_daily->save()){
     		return redirect()->action('ProjectOrderController@showProjectDaily', $manpower_daily->po_daily_id)->with('success', 'Manpower Time Log is updated');
     	}
@@ -395,7 +399,7 @@ class ProjectOrderController extends Controller {
         $projectDailyEquipment = ProjectOrderDailyEquipment::where('po_daily_id', $po_daily_id)->get();
         $grandTotalEquipment = 0;
         foreach($projectDailyEquipment as $k=>$v) {
-            $v->equipment = Equipment::find($v->id);
+            $v->equipment = Equipment::find($v->equipment_id);
             $v->total = $v->rate * $v->duration;
             $grandTotalEquipment += $v->total;
         }
