@@ -53,7 +53,7 @@ class ProjectOrderDailyManpower extends Model
             }
 
     		//return total hours for OT(above 5pm)
-    		if($regTotalHour > self::MAX_REG_HOUR) {
+    		if($regTotalHour > self::MAX_REG_HOUR && !$this->is_overtime) {
     			$regTotalOTHour = $regTotalHour - self::MAX_REG_HOUR;
     			$regTotalHour = self::MAX_REG_HOUR;
     		}
