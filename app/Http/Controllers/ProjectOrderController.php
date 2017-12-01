@@ -20,8 +20,8 @@ use Input;
 
 class ProjectOrderController extends Controller {
     public function index() {
-    	$po = ProjectOrder::where("category", "production")->get();
-        $project = ProjectOrder::where("category", "project")->get();
+    	$po = ProjectOrder::where("category", "production")->orderBy('start_date', 'DESC')->get();
+        $project = ProjectOrder::where("category", "project")->orderBy('start_date', 'DESC')->get();
 
         $this->processPo($po);
         $this->processPo($project);
