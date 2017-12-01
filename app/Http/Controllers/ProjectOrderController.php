@@ -185,9 +185,15 @@ class ProjectOrderController extends Controller {
 
         //Get All Materials on the PO
         $totalMaterialsExpense = 0;
-        $projectOrderMaterials = ProjectOrderMaterials::where('po_id', $id)->get();
+        $projectOrderMaterials = ProjectOrderMaterials::where('po_id', $id)->orderBy('or_date','desc')->get();
         foreach ($projectOrderMaterials as $k=>$v) {
         	$v->total_amount = ($v->quantity * $v->unit_cost) * $v->duration;
+
+			if ($v->or_date != NULL) {
+				$dateFormatted = new Carbon($v->date);
+				$v->or_date = $dateFormatted->format("m/d/Y");
+			}
+			
         	$totalMaterialsExpense = $totalMaterialsExpense + $v->total_amount;
         	$projectTotalExpenses = $projectTotalExpenses + $v->total_amount;
         }

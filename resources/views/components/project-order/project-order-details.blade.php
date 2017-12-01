@@ -112,7 +112,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-lg-5 col-md-5">
+        <div class="col-lg-4 col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <i class="fa fa-building fa-fw"></i> Project Daily
@@ -180,7 +180,7 @@
                 <!-- /.panel-body -->
             </div>
         </div>
-        <div class="col-lg-7 col-md-7">
+        <div class="col-lg-8 col-md-8">
         	<div class="panel panel-default">
         	    <div class="panel-heading">
         	        <i class="fa fa-building fa-fw"></i> Materials
@@ -196,6 +196,8 @@
                         <thead>
                             <tr>
                                 <th class="text-center">Description</th>
+								<th class="text-center">OR</th>
+								<th class="text-center">Date</th>
                                 <th class="text-center">QTY</th>
                                 <th class="text-center">Unit</th>
                                 <th class="text-right">Unit Cost</th>
@@ -208,6 +210,8 @@
                             @foreach ($projectOrderMaterials as $k=>$v)
                                 <tr>
                                     <td class="text-center">{{$v->description}}</td>
+									<th class="text-center">{{$v->or_number}}</th>
+									<td class="text-center">{{$v->or_date}}</td>
                                     <td class="text-center">{{$v->quantity}}</td>
                                     <td class="text-center">{{$v->unit}}</td>
                                     <td class="text-right">{{number_format($v->unit_cost, 2)}}</td>
@@ -223,11 +227,11 @@
                             
                             @if(count($projectOrderMaterials) == 0)
                                 <tr>
-                                    <td colspan="7" class="text-center">No Items Added</td>
+                                    <td colspan="9" class="text-center">No Items Added</td>
                                 </tr>
                             @else
                                 <tr style="background-color: #95ec90;">
-                                    <td colspan="5" class="text-right"><strong>Total</strong></td>
+                                    <td colspan="7" class="text-right"><strong>Total</strong></td>
                                     <td class="text-right"><strong>{{number_format($totalMaterialsExpense, 2)}}</strong></td>
                                     <td></td>
                                 </tr>
@@ -343,6 +347,15 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
+						<div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('duration')) has-error  @endif">
+                                <label>OR Number</label>
+                                <input type="text" class="form-control" placeholder="Enter OR Number" name="or_number" value="@if(old('endif')) {{old('endif')}} @endif">
+                                @if ($errors->has('or_number'))
+                                    <p class="help-block">{{ $errors->first('or_number') }} </p>
+                                @endif
+                            </div>
+                        </div>
                         <div class="col-lg-12">
                             <div class="form-group @if ($errors->has('description')) has-error  @endif">
                                 <label>Description</label>
@@ -397,6 +410,18 @@
                                 @if ($errors->has('duration'))
                                     <p class="help-block">{{ $errors->first('duration') }} </p>
                                 @endif
+                            </div>
+                        </div>
+						
+						<div class="col-lg-12">
+                            <div class="form-group @if ($errors->has('duration')) has-error  @endif">
+                                <label>Date</label>
+                                <div class='input-group date' id='materialDate'>
+                                        <input type='text' class="form-control" name="date" placeholder="Enter Date" value=""/>
+                                        <span class="input-group-addon">
+                                           <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -549,6 +574,10 @@
 	<script type="text/javascript">
         var error = "{{$error}}";
         $(function () {
+			$('#materialDate').datetimepicker({
+                format : "YYYY-MM-DD"
+            });
+			
             $('#datepicker').datetimepicker({
             	format : "YYYY-MM-DD",
                 inline: true,

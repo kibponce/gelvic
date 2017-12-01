@@ -16,6 +16,8 @@ class MaterialsController extends Controller {
 			$unit = $request->input('unit');
 			$unit_cost = $request->input('unit_cost');
 			$duration = $request->input('duration');
+			$or_number = $request->input('or_number');
+			$date = $request->input('date');
 
 			$po_materials = new ProjectOrderMaterials;
 			$po_materials->po_id = $po_id;
@@ -24,6 +26,8 @@ class MaterialsController extends Controller {
 			$po_materials->unit = $unit;
 			$po_materials->unit_cost = $unit_cost;
 			$po_materials->duration = $duration;
+			$po_materials->or_number = $or_number;
+			$po_materials->or_date = $date;
 
 			if($po_materials->save()){
 				return redirect()->action('ProjectOrderController@show', $po_id)->with('success', 'Materials has been successfully added');
