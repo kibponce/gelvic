@@ -190,7 +190,7 @@ class ProjectOrderController extends Controller {
         	$v->total_amount = ($v->quantity * $v->unit_cost) * $v->duration;
 
 			if ($v->or_date != NULL) {
-				$dateFormatted = new Carbon($v->date);
+				$dateFormatted = new Carbon($v->or_date);
 				$v->or_date = $dateFormatted->format("m/d/Y");
 			}
 			
