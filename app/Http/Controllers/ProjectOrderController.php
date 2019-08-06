@@ -19,16 +19,41 @@ use Redirect;
 use Input;
 
 class ProjectOrderController extends Controller {
+    // Display project order production category only
     public function index() {
-    	$po = ProjectOrder::where("category", "production")->orderBy('start_date', 'DESC')->get();
-        $project = ProjectOrder::where("category", "project")->orderBy('start_date', 'DESC')->get();
+    	$po = ProjectOrder::where("category", "production")->where('is_done', 0)->orderBy('start_date', 'DESC')->get();
 
         $this->processPo($po);
-        $this->processPo($project);
 
     	$data = array(
             'po' => $po,
-    	    'project' => $project
+            'title' => 'PRODUCTION'
+    	);
+
+        return view('components.project-order.project_order', $data);
+    }
+
+    public function project() {
+        $po = ProjectOrder::where("category", "project")->where('is_done', 0)->orderBy('start_date', 'DESC')->get();
+
+        $this->processPo($po);
+
+    	$data = array(
+            'po' => $po,
+            'title' => 'PROJECT'
+    	);
+
+        return view('components.project-order.project_order', $data);
+    }
+
+    public function archive() {
+        $po = ProjectOrder::where('is_done', 1)->orderBy('start_date', 'DESC')->get();
+
+        $this->processPo($po);
+
+    	$data = array(
+            'po' => $po,
+            'title' => 'ARCHIVE'
     	);
 
         return view('components.project-order.project_order', $data);
