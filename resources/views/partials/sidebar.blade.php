@@ -14,7 +14,19 @@
         <div class="sidebar-nav navbar-collapse">
             <ul class="nav" id="side-menu">
                 <li>
-                    <a href="{{ action('ProjectOrderController@index') }}"><i class="fa fa-gears fa-fw"></i> Project Order(PO)</a>
+                    <a href="#"><i class="fa fa-gears fa-fw"></i> Project Order(PO) <span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="{{ action('ProjectOrderController@index') }}">Production</a>
+                        </li>
+                        <li>
+                            <a href="{{ action('ProjectOrderController@project') }}">Project</a>
+                        </li>
+                        <li>
+                            <a href="{{ action('ProjectOrderController@archive') }}">Archive</a>
+                        </li>
+                    </ul>
+                    <!-- /.nav-second-level -->
                 </li>
                 <li>
                     <a href="{{ action('ManpowerController@index') }}"><i class="fa fa-users fa-fw"></i> Manpower</a>

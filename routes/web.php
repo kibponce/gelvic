@@ -14,7 +14,9 @@
 Route::get('/', 'AppController@index');
 
 Route::group(['prefix' => 'project-order'], function () {
-    Route::get('/', 'ProjectOrderController@index');
+    Route::get('/production', 'ProjectOrderController@index');
+    Route::get('/project', 'ProjectOrderController@project');
+    Route::get('/archive', 'ProjectOrderController@archive');
     Route::get('/add/{id?}', 'ProjectOrderController@add');
     Route::post('/post', 'ProjectOrderController@post');
     Route::get('/show/{id?}', 'ProjectOrderController@show');
