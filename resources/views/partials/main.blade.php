@@ -22,17 +22,5 @@
     @include('partials.assets.js')
     @yield('modals')
     @yield('scripts')
-
-    <script>
-        $(document).ready(function() {
-            $('.table-dataTable').DataTable({
-                "responsive": true,
-                "columnDefs": [ {
-                      "targets": 'no-sort',
-                      "orderable": false,
-                } ]
-            });
-        });
-    </script>
 </body>
 </head>

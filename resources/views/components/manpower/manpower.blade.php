@@ -54,3 +54,18 @@
         <!-- /.col-lg-12 -->
     </div>
 @stop
+
+@section('scripts')
+	<script>
+        $(document).ready(function() {
+            $('#manpower-table').DataTable({
+                "responsive": true,
+                "columnDefs": [ {
+                      "targets": 'no-sort',
+                      "orderable": true,
+                } ],
+                "order": [3, "desc"] // order by start date
+            });
+        });
+    </script>
+@stop
