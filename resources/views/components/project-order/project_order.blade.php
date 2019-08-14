@@ -20,7 +20,7 @@
 	            </div>
 	            <!-- /.panel-heading -->
 	            <div class="panel-body">
-	                <table width="100%" class="table table-striped table-bordered table-hover table-dataTable" id="dataTables-example">
+	                <table width="100%" class="table table-striped table-bordered table-hover table-dataTable project-order-table" id="dataTables-example">
 	                    <thead>
 	                        <tr>
 	                            <th>PO NUMBER</th>
@@ -68,4 +68,19 @@
 	    </div>
 	    <!-- /.col-lg-12 -->
 	</div>
+@stop
+
+@section('scripts')
+	<script>
+        $(document).ready(function() {
+            $('.project-order-table').DataTable({
+                "responsive": true,
+                "columnDefs": [ {
+                      "targets": 'no-sort',
+                      "orderable": true,
+                } ],
+                "order": [3, "desc"] // order by start date
+            });
+        });
+    </script>
 @stop

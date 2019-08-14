@@ -18,7 +18,7 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body">
-                    <table class="table table-striped table-bordered table-hover table-dataTable">
+                    <table class="table table-striped table-bordered table-hover table-dataTable" id="equipment-table">
                     	<thead>
                     		<tr>
                     			<th>ID</th>
@@ -49,4 +49,19 @@
         </div>
         <!-- /.col-lg-12 -->
     </div>
+@stop
+
+@section('scripts')
+	<script>
+        $(document).ready(function() {
+            $('#equipment-table').DataTable({
+                "responsive": true,
+                "columnDefs": [ {
+                      "targets": 'no-sort',
+                      "orderable": true,
+                } ],
+                "order": [3, "desc"] // order by start date
+            });
+        });
+    </script>
 @stop
